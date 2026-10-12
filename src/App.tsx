@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
+import Workspace from './Workspace'
 import './App.css'
 
 function App() {
@@ -79,7 +80,8 @@ function App() {
 
   return (
     <main className="page">
-      <header className="brand"><span className="brand-mark" aria-hidden="true">A</span> Approvia</header>
+      <header className="app-header"><div className="brand"><span className="brand-mark" aria-hidden="true">A</span> Approvia</div>{session && <div className="signed-in-header"><p className="account-email">{session.user.email}</p><button className="secondary-button" type="button" onClick={signOut} disabled={busy}>{busy ? 'Signing out…' : 'Sign out'}</button></div>}</header>
+      {session ? <><Workspace key={session.user.id} userId={session.user.id} />{error && <p className="error" role="alert">{error}</p>}</> : <>
       <div className="content">
       <section className="intro" aria-labelledby="page-title">
         <p className="eyebrow">Institutional approval management</p>
@@ -88,15 +90,7 @@ function App() {
         <p className="note">Your institution. Your requests. One place to stay connected.</p>
       </section>
       <section className="auth-card" aria-labelledby="auth-title">
-        {checkingSession ? <p role="status">Checking your session…</p> : session ? (
-          <>
-            <span className="session-mark" aria-hidden="true">✓</span>
-            <h2 id="auth-title">You’re signed in.</h2>
-            <p className="account-email">{session.user.email}</p>
-            <p className="auth-copy">Welcome to Approvia. Request management will be available in a future release.</p>
-            <button className="primary-button" type="button" onClick={signOut} disabled={busy}>{busy ? 'Signing out…' : 'Sign out'}</button>
-          </>
-        ) : (
+        {checkingSession ? <p role="status">Checking your session…</p> : (
           <>
             <p className="eyebrow">Welcome back</p>
             <h2 id="auth-title">Sign in to Approvia</h2>
@@ -118,6 +112,7 @@ function App() {
         {error && <p className="error" role="alert">{error}</p>}
       </section>
       </div>
+      </>}
       <footer>Approvia · Institutional Digital Approval Management System</footer>
     </main>
   )

@@ -1,10 +1,10 @@
 # Approvia workflows
 
-Status: required behavior and illustrative flows. An MVP email/password login, signed-in confirmation, session restoration, and logout exist; no approval engine or request UI exists. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 6, 8–14, 16–20, 22, and 26. Unsettled behavior is tracked in [DECISIONS.md](DECISIONS.md).
+Status: required institutional behavior and illustrative flows, with D10's General Request → Tutor → final decision/status/history flow implemented for testing. Login/session restoration/logout, active-profile gating, student submission, and Tutor review screens exist. Other workflows below remain planned unless explicitly identified as implemented. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 6, 8–14, 16–20, 22, and 26. Unsettled extensions are tracked in [DECISIONS.md](DECISIONS.md).
 
 ## Login and dashboard routing
 
-The current MVP implements authentication only (D9). The account lookup/dashboard routing below is planned institutional behavior. The signed-in confirmation does not assign a role or authorize application data access.
+The current MVP expands D9 with D10. Login loads the protected active profile: Student opens request submission/tracking; Faculty opens assigned Tutor reviews. Missing profiles receive setup guidance, inactive profiles are blocked, and Admin receives a placeholder without request contents or approval functions. Full Admin account-management and invitation screens remain planned.
 
 ```text
 Single login → Authentication → Read account type
@@ -34,6 +34,8 @@ Students must not manually find/select individual tutors or other approvers. See
 The institutional hierarchy is Tutor → HOD → Dean → Principal. Invalid ordering examples include Principal → Tutor, Dean → Tutor → HOD, and HOD → Tutor.
 
 Source section 12 offers two interface alternatives: responsibility checkboxes or predefined route options. Neither has been selected.
+
+D10 selects a fixed Tutor-only route for the General Request test MVP. The backend resolves the student's class Tutor; students cannot supply an approver ID. Broader route-selection UI remains open.
 
 Request types may define required approvers, optional approvers, minimum/maximum approval levels, and permission to customize the route. A valid hierarchy alone does not authorize a route that bypasses a request type's mandatory authorities.
 
@@ -75,6 +77,8 @@ Approval by Faculty X advances the request to Faculty Y; approval by Faculty Y a
 
 These labels are not a complete state machine. Exact Submitted/In Review timing, transition permissions, and reopening behavior need later design. Step indicators such as Pending or Not Required in tracking examples are not additional primary request statuses. The example ID `APR-2026-0041` does not establish an identifier-generation policy.
 
+D10 implements only In Review → Approved or Rejected. Submission immediately enters In Review, and both decisions are final with a required comment. No edits after submission, drafts, return/resubmission, cancellation, or standalone comments are included in this increment. UUIDs are stored as request identifiers; the UI shows their first eight characters for convenience.
+
 Approvers can Approve, Reject, Return for Correction, and Add Comment. Each action records the request, approver, approval responsibility, action, comment, date, and time. The source does not specify comment requirements for each action or whether a standalone comment changes status.
 
 ## Corrections and cancellation
@@ -89,4 +93,4 @@ Students can track status and view approval history and approver comments. Track
 
 Notifications belong to the initial scope, but their channels and delivery rules are unspecified. Significant actions must be audited as described in [SECURITY.md](SECURITY.md).
 
-Changing an assignment directs future requests to the newly assigned faculty without code changes. The handling of existing pending steps, unavailable/inactive approvers, and missing assignments needs an explicit decision before implementation.
+Changing an assignment directs future requests to the newly assigned faculty without code changes. In the approved test MVP (D10), pending requests keep the Tutor resolved at submission. Missing/inactive class/department/Tutor configuration blocks submission; inactive users cannot act. Existing requests assigned to an inactive Tutor wait for later reassignment support. Other institutional assignment scenarios remain open.

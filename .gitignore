@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 .vercel
+artifacts/
 logs
 *.log
 npm-debug.log*

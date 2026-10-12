@@ -6,7 +6,7 @@ The goal is real deployment in a college, with security, data integrity, maintai
 
 ## Current state
 
-This repository contains the project context documentation and an MVP Supabase email/password login, signed-in confirmation, session restoration, and logout. Institutional accounts/roles, database policies, approval workflows, and supporting services are not implemented. See [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for verified progress.
+Approvia's small test MVP supports Supabase email/password login, student General Request submission, class-resolved Tutor approve/reject with comment, and student status/history tracking. PostgreSQL profiles, RLS policies, and guarded transactional functions control access. Documents, notifications, returns, cancellation, additional approval levels, and Admin screens remain future work. See [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for verified progress and limits.
 
 ## Start here
 
@@ -22,6 +22,7 @@ For a new coding chat, use this repository as the workspace and have the agent r
 | [SECURITY.md](docs/SECURITY.md) | Authorization, request privacy, document handling, and audits |
 | [DECISIONS.md](docs/DECISIONS.md) | Established requirements, documentation choices, and open questions |
 | [ACCOUNT_ACCESS_PLAN.md](docs/ACCOUNT_ACCESS_PLAN.md) | Approved provisioning, login, and visibility rules plus remaining setup proposals |
+| [MVP_SCOPE.md](docs/MVP_SCOPE.md) | Approved smaller end-to-end approval MVP and testing scope |
 | [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) | Verified progress, outstanding work, and latest handoff |
 
 ## Core model
@@ -44,7 +45,7 @@ Departments, classes, faculty assignments, request types, and workflow rules are
 | Server-side business logic | Supabase Edge Functions; PostgreSQL Functions where appropriate |
 | Version control | Git, GitHub |
 
-The frontend uses npm. After cloning, run `npm ci`, then `npm run dev` for development. Run `npm run build` for TypeScript checking and a production build, `npm run lint` for linting, `npm run test` for the Vitest authentication tests, and `npm run preview` to serve the build locally. Tests use mocked Supabase responses; they do not replace live credential or database-policy verification.
+The frontend uses npm. After cloning, run `npm ci`, then `npm run dev` for development. Run `npm run build` for TypeScript checking and a production build, `npm run lint` for linting, `npm run test` for Vitest tests, and `npm run preview` to serve the build locally. Tests include mocked authentication/workspace UI checks and actual PostgreSQL operations/RLS checks in isolated PGlite with a Supabase auth identity stub. They do not replace real hosted login verification.
 
 ## Frontend deployment
 
@@ -56,11 +57,11 @@ In Vercel, add the same two variables in Project Settings → Environment Variab
 
 Run `node scripts/check-supabase.mjs` to verify the configured local URL/key through a read-only Auth settings request. A successful response verifies reachability and key acceptance; it does not verify login, database permissions, or approval workflows.
 
-## MVP login verification
+## MVP setup and verification
 
-Use an existing email/password user from this Supabase project to test login, refresh/session restoration, and logout. A project owner can prepare a development-only test user through Supabase Authentication → Users; no public signup or account-creation UI is included. Keep credentials private. Invitation/account provisioning remains a separate implementation step under D6.
+The current development database is approvia-dev (`cypcgwcmavauezmxdbgb`). Its initial schema was applied manually through the approved SQL Editor flow. On a new empty test project, apply [202610120001_small_mvp.sql](supabase/migrations/202610120001_small_mvp.sql) once as the project owner. Prepare two existing, email-confirmed Auth users and use [setup-test-users.example.sql](supabase/setup-test-users.example.sql) with their emails to create the test profiles/class. Never rerun the initial migration over an existing schema. Before adopting automated Supabase CLI migrations, reconcile this manually applied baseline with migration history.
 
-The signed-in screen displays the authenticated email only. It grants no Student, Faculty, or Admin capabilities and performs no application database queries. Password recovery UI and institutional profile/domain enforcement are deferred by the approved authentication-only MVP scope (D9).
+Use the Student account to submit a request; sign out, use the Tutor account to approve/reject with a comment, then sign back in as Student to view the decision/history. Refresh to verify persistence. Unprovisioned users receive setup guidance; inactive users are blocked; Admin accounts receive no request contents or approval UI. Credentials stay private. Public signup UI, invitation/account management, and recovery UI are not included. A safe owner-side hosted database check is provided in [hosted-smoke.sql](supabase/tests/hosted-smoke.sql); it uses authenticated-role identities and rolls back synthetic request data.
 
 ## Source and decision status
 

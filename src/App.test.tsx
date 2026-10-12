@@ -5,6 +5,8 @@ import userEvent from '@testing-library/user-event'
 import type { Session } from '@supabase/supabase-js'
 import App from './App'
 
+vi.mock('./Workspace', () => ({ default: () => null }))
+
 const mock = vi.hoisted(() => ({
   configured: true,
   getSession: vi.fn(),

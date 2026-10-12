@@ -1,6 +1,6 @@
 # Approvia domain model
 
-Status: conceptual requirements summary; no physical database schema has been designed or implemented. The [complete requirements](PROJECT_REQUIREMENTS.md) are authoritative; see [decisions](DECISIONS.md) for unresolved rules.
+Status: conceptual institutional requirements summary, with a physical schema implemented for the small test MVP D10. The eight deployed MVP tables are profiles, departments, classes, request_types, requests, approval_steps, request_actions, and audit_logs. Other entity concepts remain future scope. The [complete requirements](PROJECT_REQUIREMENTS.md) and approved amendments are authoritative; see [decisions](DECISIONS.md) for unresolved extensions.
 
 ## Institutional structure
 
@@ -29,7 +29,7 @@ Classes/divisions are distinct from departments. A department may have one or mo
 | `DEAN` | Institution | Currently assigned active Dean |
 | `PRINCIPAL` | Institution | Currently assigned active Principal |
 
-Administrators maintain assignments. Assignment changes affect future requests without source-code changes; their effect on pending requests is unresolved.
+Administrators maintain assignments. D10 settles the test MVP: submission snapshots the class Tutor; changing that assignment affects future requests while pending requests keep their original Tutor. A request assigned to an inactive Tutor waits for later reassignment support. Broader institutional reassignment rules remain open.
 
 ## Users, profiles, and access concepts
 

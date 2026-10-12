@@ -50,9 +50,16 @@ The user explicitly selected all three recommended answers to the account/login,
 |---|---|---|
 | D9 | Implement only Supabase email/password authentication for the current MVP increment | User instruction: "for mvp let's only make authentication email and password(easy to login)". Include login for existing Supabase Auth users, a signed-in confirmation, session restoration, and logout. Account provisioning/invitations, recovery UI, institutional domain enforcement, role dashboards, profile checks, and RLS are deferred. D6–D8 remain approved requirements for the institutional system; this scope does not permit public signup or grant application data access from an Auth session. |
 
+## Small working MVP decision: 2026-10-12
+
+| ID | Decision | Approval and limits |
+|---|---|---|
+| D10 | Expand the current MVP to one complete General Request workflow | User explicitly selected the small working MVP and the simple workflow rules. Email/password login; title/description form; fixed Tutor-only route resolved from the student's class; approve/reject with required comment; student status/history tracking. Submission enters In Review, requires an active class/department/faculty Tutor, and snapshots that Tutor. Approved/Rejected are final; no editing after submission. Inactive accounts cannot act; requests assigned to inactive Tutors wait for later reassignment support. Manual development accounts/profiles/class configuration; documents, drafts, returns, cancellation, notifications, route customization, additional approval levels, and Admin screens are deferred. This expands D9 for the current test increment; larger institutional requirements remain future scope. |
+| D11 | Apply the tested MVP database and two test profiles to approvia-dev | User explicitly approved the migration and test-profile setup in the browser confirmation question. Provided two development emails in Student/Tutor order; confirmed creating the Auth users. No passwords were requested or changed. Personal email addresses are used for development testing; production institutional-domain/invitation requirements remain D6. |
+
 ## Open questions
 
-Every question below is **unresolved**. Consult the user before implementing behavior that depends on it; none has a selected default.
+The table below tracks remaining institutional behavior. D10 selects narrow route/type/status/comment/assignment rules for the test MVP only; broader behavior remains unresolved. Consult the user before implementing an unresolved extension.
 
 | ID | Question | Source and reason it remains open |
 |---|---|---|

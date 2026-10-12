@@ -1,6 +1,8 @@
 # Approvia account and access plan
 
-Date: 2026-10-12. Status: **core policies approved; institutional permissions implementation pending**. The user selected Admin invitations/email-password login, faculty-only approval authority, and restricted read permissions. [DECISIONS.md](DECISIONS.md) D6–D8 record approval and rationale. D9 limits the current MVP increment to email/password authentication, session restoration, signed-in confirmation, and logout for existing Supabase users. Provisioning, recovery UI, domain/profile checks, and role dashboards are deferred; an Auth session grants no institutional data access. Additional technical proposals and remaining questions below are not approved by those selections. Requirements sections 5–10 and 23–24 supply the original context.
+Date: 2026-10-12. Status: **core policies approved; small MVP Student/Tutor access implemented**. The user selected Admin invitations/email-password login, faculty-only approval authority, and restricted read permissions. [DECISIONS.md](DECISIONS.md) D6–D8 record approval and rationale. D10 expands authentication-only D9 with manually prepared protected profiles, Student/Tutor workspaces, RLS, and guarded request functions. Automated provisioning, recovery UI, institutional-domain enforcement, and Admin screens remain deferred. Additional technical proposals and remaining questions below are labeled separately. Requirements sections 5–10 and 23–24 supply the original context.
+
+Current implementation update (D10/D11): the user expanded the test MVP to Student/Tutor request workspaces. Protected manually prepared profiles, active-account checks, RLS, and guarded request RPCs are implemented. Development test emails were supplied by the user; production institutional-domain/invitation requirements are retained. Automated provisioning, first-Admin setup, recovery UI, and Admin screens remain pending. The earlier D9 authentication-only limit is superseded for this increment by D10.
 
 ## Approved account provisioning (D6/Q12)
 
@@ -9,7 +11,7 @@ Date: 2026-10-12. Status: **core policies approved; institutional permissions im
 
 ## Additional implementation proposals and open setup details
 
-The following are proposed implementation details or established authorization constraints; the user has not selected the first-Admin provisioning or deactivation mechanism.
+The first-Admin provisioning process is still proposed. Protected roles, class membership, and inactive-account denial are implemented for the approved test MVP; a deactivation administration screen is not included.
 
 - The deployment owner establishes the first Admin through a controlled server-side setup. Users cannot grant themselves Admin access. Additional Admin provisioning needs an explicit authorized process.
 - The account record stores the assigned account type and active/inactive status. User-editable authentication metadata must not grant roles or approval responsibilities.
@@ -42,4 +44,4 @@ Admin audit views must omit request/document contents and comment bodies to resp
 4. Extend the existing single login with recovery, protected dashboards, and active-profile checks.
 5. Verify denied access across account types, self-promotion attempts, inactive accounts, and unrelated users' records.
 
-No request schema, approval state machine, RLS/storage access policy, or production account has been created in this planning pass.
+The test MVP request schema, one-step state machine, and RLS are implemented. Storage policies and production account setup remain future work.

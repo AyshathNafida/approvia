@@ -1,6 +1,6 @@
 # Approvia intended architecture
 
-Status: architecture from [requirements](PROJECT_REQUIREMENTS.md) sections 1, 23–26. React/TypeScript/Vite frontend, Vercel build configuration, and Supabase email/password login/session restoration/logout now exist for an authentication-only MVP (D9). A read-only Auth settings check verified the supplied project URL/key. Database, RLS, storage, functions, institutional account provisioning/roles, and approval workflows remain planned. See [PROJECT_STATUS.md](PROJECT_STATUS.md) for verification and deployment status.
+Status: architecture from [requirements](PROJECT_REQUIREMENTS.md) sections 1, 23–26, with approved small test MVP D10. React/TypeScript/Vite, Supabase Auth, protected account profiles, General Request submission, Tutor decisions, and status/history UI are implemented. Eight PostgreSQL tables, RLS, and transactional submit/decision functions were applied to approvia-dev. Storage, automated account provisioning, additional approval levels, and other institutional capabilities remain planned. See [PROJECT_STATUS.md](PROJECT_STATUS.md) for verification and deployment status.
 
 ## Technology responsibilities
 
@@ -42,8 +42,14 @@ This diagram leaves open which operations use Edge Functions, PostgreSQL Functio
 
 The source does not select multi-institution tenancy, integration protocols, workload targets, hosting regions, or deployment environments. Do not infer those designs from the production objective.
 
-## Implementation design still required
+## Implemented small MVP boundaries
 
-The physical schema and relationships, RLS policies, storage access policies, server-side interfaces, transaction/concurrency behavior, full frontend structure, and testing approach remain to be designed. The starter's npm commands and Vercel build settings are documented in [README.md](../README.md). Supabase and production operational configuration remain pending.
+The frontend uses src/lib/requests.ts for permitted queries and RPC calls. public.submit_request validates student/class/department/type/Tutor configuration and snapshots the resolved approval step. public.decide_request checks active faculty assignment, locks the request/step, and atomically records the final status, comment history, and audit metadata. Clients have SELECT privileges only on application tables; all writes use the guarded functions. approvia_private helpers avoid recursive RLS and are not exposed as API RPCs.
+
+The eight tables are profiles, departments, classes, request_types, requests, approval_steps, request_actions, and audit_logs. Backend identities are configured data, not hard-coded faculty IDs. Only the approved Tutor route is supported by this migration; additional routes require later migrations and workflow decisions. The baseline was applied manually through SQL Editor; reconcile migration history before introducing CLI deployment automation.
+
+## Remaining design
+
+Schema/RLS extensions for deferred entities, storage access policies, additional server interfaces, multi-level concurrency behavior, Admin UI, and broader testing remain to be designed. npm commands and Vercel build settings are documented in [README.md](../README.md). Production operational configuration remains pending.
 
 Before designing behavior affected by open product rules, consult [DECISIONS.md](DECISIONS.md). Track actual implementation progress in [PROJECT_STATUS.md](PROJECT_STATUS.md).

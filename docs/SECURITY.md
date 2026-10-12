@@ -1,12 +1,12 @@
 # Approvia security and audit requirements
 
-Status: required controls, with MVP Supabase email/password authentication/session restoration/logout implemented. Institutional profile checks, authorization, RLS, storage policies, and audit controls remain unimplemented. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 1, 6–8, 13–14, 18–20, and 23–25. D9 defers those controls from the authentication-only MVP, which grants no application data access.
+Status: required institutional controls, with small test MVP authentication, active profile checks, RLS, guarded submission/decision functions, preserved action history, and metadata audit events implemented under D10. Storage, invitation/account administration, full institutional identity validation, and broader workflows remain future work. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 1, 6–8, 13–14, 18–20, and 23–25.
 
 ## Authentication and authorization
 
 Use Supabase Auth with a single login interface. Read the authenticated user's account type to determine dashboard access; users do not select their own type at login.
 
-Enforce access controls in the frontend and backend. Manually navigating to a restricted page or invoking a restricted operation must not bypass authorization. Database authorization is intended to use PostgreSQL Row Level Security. Detailed RLS policies are not yet designed.
+Enforce access controls in the frontend and backend. Manually navigating to a restricted page or invoking a restricted operation must not bypass authorization. MVP PostgreSQL RLS allows students their own requests, assigned faculty current/completed requests, and Admin metadata/configuration only. Profiles are read-only from the browser. Both write RPCs recheck active account type and assignment; direct table writes are not granted. Remaining database/storage permissions need design when their features are added.
 
 | Actor | Required authorization boundary |
 |---|---|
@@ -28,7 +28,7 @@ Approved provisioning/login policy (D6): Admin invites students/faculty after in
 - Preserve prior approval/action history when a request is returned, edited, and resubmitted; do not silently modify or overwrite it.
 - Record each approval action's request, approver, responsibility, action, comment, date, and time.
 
-Transaction boundaries, duplicate/concurrent action handling, history storage mechanics, and assignment-version behavior require later design. Recording history does not establish a chosen schema or immutable-storage implementation.
+MVP request submission and Tutor decisions use database transactions. Decisions lock the request/step, require a pending assigned step and comment, and reject repeat final decisions. Approval actions cannot be edited/deleted by browser users. The submission-time Tutor is retained for pending requests under D10. Broader workflow versioning, document history, and concurrent multi-level operations remain future design work.
 
 ## Supporting documents
 

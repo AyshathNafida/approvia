@@ -1,55 +1,39 @@
 # Approvia project status
 
-Last updated: 2026-10-12 (user timezone: Asia/Calcutta).
+Last updated: 2026-10-12 (Asia/Calcutta).
 
-## Verified repository state
+## Verified repository and backend state
 
-The repository contains project context documentation and a React/TypeScript/Vite MVP email/password login at the repository root. It supports login for existing Supabase users, signed-in email confirmation, restored sessions, and logout on the current device. npm scripts provide development, TypeScript checking plus production build, linting with Oxlint, Vitest authentication tests, and build preview. A dependency lockfile and Vercel build configuration are included.
+The small working MVP (D10) is implemented: email/password login, session restoration/logout, active-profile gating, Student General Request title/description submission, class-resolved Tutor approve/reject with mandatory comment, and Student status/action-history tracking. Filters, refresh, loading/error/empty states, and responsive layouts are included.
 
-Git origin is configured as https://github.com/AyshathNafida/approvia.git. Initial commit `1b74e24` was pushed to `master` and its hash verified against the GitHub remote. Vercel hosting was selected by the user, who subsequently reported completing deployment; a successful hosted deployment has not been independently verified.
+The version-controlled migration supabase/migrations/202610120001_small_mvp.sql was applied manually through the approved SQL Editor flow to approvia-dev (cypcgwcmavauezmxdbgb). Eight tables, RLS, protected profile configuration, transactional submit/decision functions, approval-step snapshots, action history, and audit metadata exist. Direct browser writes are not granted; Admin has no request-content access. Private helper functions use an empty search path; only guarded public RPCs grant authenticated execution.
 
-The Supabase JavaScript client is installed and initialized from public environment variables when available. The user's project `cypcgwcmavauezmxdbgb` accepted the provided publishable key through a read-only Auth settings request (HTTP 200). Actual URL/key values are stored in ignored `.env.local`, with blank placeholders in `.env.example`.
+The user confirmed creating two existing Auth users. Approved setup created one Student profile, one Faculty/Tutor profile, one test department, and one test class. Passwords were not requested or changed. Setup scripts retain placeholder emails in Git.
 
-Authentication UI is implemented; institutional provisioning/invitations, recovery UI, email-domain/profile enforcement, role dashboards, physical database schema, migrations, RLS, approval engine, storage integration, and notifications remain unimplemented. The signed-in screen performs no application database queries and grants no institutional data access. Vercel environment configuration remains unverified.
+Git origin is https://github.com/AyshathNafida/approvia.git on master. The supplied live URL is https://approviaproject.vercel.app/. Its existing email/password page was accessible and login configuration appeared available before this update. Deployment of the expanded MVP is still being verified.
 
-## Completed work
+## Approved scope
 
-- Preserved all 26 source requirement sections and created the project context foundation on 2026-10-09.
-- Configured the GitHub remote and verified that the remote repository was empty.
-- Added the official Vite React/TypeScript starter toolchain with an Approvia development notice.
-- Added Vercel settings: framework Vite, root directory `.`, build command `npm run build`, output `dist`.
-- Documented npm commands and deployment settings in README.md, and recorded the approved setup in DECISIONS.md.
-- Ignored dependencies, build artifacts, local environment files, and Vercel metadata.
-- Added the environment-configured Supabase browser client and a read-only local connection-check script; documented local and Vercel configuration.
-- Implemented the user-requested authentication-only MVP (D9) and added seven mocked authentication tests.
+D10 expands authentication-only D9. General Request has one Tutor-only step, with the Tutor resolved/snapshotted at submission. Submission requires active student/class/department/faculty Tutor configuration and immediately enters In Review. Approved/Rejected are final with no edits after submission. Inactive users cannot act; pending requests assigned to inactive Tutors await future reassignment support.
+
+D6–D8 remain institutional requirements. Public signup UI, automated invitations/provisioning, institutional-domain enforcement, recovery UI, documents, drafts, returns/resubmission, cancellation, notifications, additional approval levels, reports, and Admin screens are deferred. This is a development-test increment, not institutional production readiness.
+
+## Verification performed
+
+- 20 Vitest tests passed: seven mocked authentication tests, five mocked workspace tests, and eight actual PostgreSQL operation/RLS tests using isolated PGlite and a Supabase auth identity stub.
+- Database tests cover submission/approval/rejection history and audits, Student/unrelated Faculty/Admin/unconfigured user isolation, denied direct writes/self-promotion, required comments, repeated decisions, assignment snapshots, inactive/missing/non-faculty Tutor configuration, inactive users, and anonymous access.
+- TypeScript/production build and lint passed. Dependency installation reported zero vulnerabilities.
+- Hosted database migration and test-profile setup returned success. The rolled-back hosted smoke transaction submitted as the Student identity, decided as the assigned Tutor identity, read Student history, and verified an unconfigured identity sees zero requests. Its synthetic request data was not retained. This exercises actual hosted RPC/RLS but does not test password login or browser session persistence.
+- Earlier checks verified the captured original specification remains unchanged before appended approved amendments, and project documentation links/anchors/whitespace.
 
 ## Outstanding work
 
-1. Verify the updated Vercel deployment with both Supabase public variables. Prepare a development email/password user and verify live login, refresh, and logout; no real test credentials have been supplied.
-2. Confirm accepted institutional email domains and first/additional Admin provisioning, then design Supabase account/login implementation against approved D6–D8; separate production data before institutional use.
-3. Resolve dependent open questions before implementing workflow, identity, document, and access behavior.
-4. Design the physical schema, migrations, RLS/storage policies, server operations, and application structure.
-5. Implement and verify the student, faculty, and Admin capabilities, preserved history, and notifications.
-6. Add meaningful database/policy/workflow tests as those features are implemented and select production operational configuration.
-
-## Verification
-
-Earlier documentation checks (2026-10-09): source copy matched the original doc.txt byte for byte; Markdown links/anchors and code fences were checked; requirement summaries were reviewed; whitespace checks passed.
-
-Starter checks (2026-10-12): npm dependency installation reported zero vulnerabilities; `npm run build` passed TypeScript checking and the Vite production build; `npm run lint` passed. Relative Markdown file targets and staged Git whitespace checks passed. Database policies, application workflows, and a hosted Vercel deployment have not been tested.
+1. Verify that Vercel deploys this new commit, then complete Student → Tutor → Student testing with the user's privately held test credentials.
+2. Extend meaningful tests when adding more workflows; real concurrency/load and comprehensive production security verification remain pending.
+3. Before introducing Supabase CLI deployment automation, reconcile the manually applied baseline with migration history; do not rerun the initial migration on an existing schema.
+4. Resolve remaining institutional workflow, identity, storage, retention, reporting, and first-Admin rules before dependent features.
+5. Separate production data/environments and establish backups, monitoring, account lifecycle controls, and deployment operations before institutional use.
 
 ## Latest handoff: 2026-10-12
 
-MVP documentation links/anchors and Git whitespace checks passed after updating the scope and implemented-capability descriptions.
-
-Latest increment: the user limited MVP work to easy email/password authentication. D9 records that scope. Login/logout, session restoration, clear error/loading states, password visibility, and a signed-in confirmation are implemented. Missing configuration disables login. Seven mocked Vitest tests passed, covering successful login, invalid credentials, network errors, restored sessions/logout, logout failure, a session-restoration race, and missing configuration. TypeScript/production build and lint passed. Desktop login layout was inspected in the local browser. No real-user login, reload persistence against Supabase, hosted deployment, or institutional permissions were verified. The test runner required sandbox escalation after a temporary-file permission failure; the rerun passed.
-
-The user explicitly approved all three account/access choices on 2026-10-12: Admin invitations with verified institutional email and email/password/recovery; faculty-only approval authority; restricted student/faculty/Admin read permissions. D6–D8 record the decisions. ACCOUNT_ACCESS_PLAN.md now separates approved policies from additional setup proposals; requirements amendments preserve the original specification and explicitly supersede the section 6.3 Admin exception. AGENTS.md and account/security/workflow topic documents reflect the choices. Accepted email domains, first/additional Admin provisioning, report/audit fields and retention, and other workflow questions remain open. No login, schema, or authorization implementation was added in that earlier documentation pass.
-
-Decision documentation verification: relative Markdown links/anchors and Git whitespace checks passed. Compared the captured specification to its previous Git version (normalizing line endings) and verified the original text remains unchanged before appended amendments. Checked affected documents for stale unresolved-Q1/proposal statements. No application tests were run for this documentation-only change.
-
-Supabase setup checks (2026-10-12): read-only Auth settings request returned HTTP 200 with the supplied publishable key; dependency installation reported zero vulnerabilities; `npm run build`, `npm run lint`, and `git diff --check` passed after integration. `git check-ignore .env.local` confirmed that local project configuration is excluded from commits. No login, database, or hosted Vercel checks were performed.
-
-The user agreed to create, build, commit, and push a React/TypeScript/Vite starter to resolve Vercel's empty repository error, then requested Supabase connection and supplied a publishable key. The project reference was taken from the open Supabase dashboard URL and URL/key compatibility verified. Keep the captured specification intact and all unresolved product rules open. The starter and client setup are a deployment foundation, not a completed institutional application.
-
-For Vercel import, select `master`, framework Vite, root `.`, build `npm run build`, output `dist`. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in Vercel and redeploy. The connection-check script uses ignored local configuration and does not create accounts or modify remote data. Login, schema, RLS, and workflow implementation are next steps after the necessary decisions.
+The user approved a small working MVP and simple workflow rules, provided the Vercel URL, supplied Student/Tutor development emails in that order, confirmed creating the Auth users, and approved applying the tested migration/profiles at the browser permission step. D10/D11 and MVP_SCOPE.md record this scope. Backend schema and test configuration are applied; frontend deployment verification is in progress. Do not describe mocked UI checks or SQL identity smoke checks as successful end-to-end password login.
