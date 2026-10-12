@@ -25,7 +25,7 @@ There is no implemented login/account workflow, physical database schema, migrat
 ## Outstanding work
 
 1. Set the two public Supabase variables in Vercel and redeploy; verify the hosted deployment. The notice page remains available if variables are missing.
-2. Configure Supabase local development and account provisioning after relevant product decisions are approved; separate production data before institutional use.
+2. Confirm accepted institutional email domains and first/additional Admin provisioning, then design Supabase account/login implementation against approved D6–D8; separate production data before institutional use.
 3. Resolve dependent open questions before implementing workflow, identity, document, and access behavior.
 4. Design the physical schema, migrations, RLS/storage policies, server operations, and application structure.
 5. Implement and verify the student, faculty, and Admin capabilities, preserved history, and notifications.
@@ -38,6 +38,10 @@ Earlier documentation checks (2026-10-09): source copy matched the original doc.
 Starter checks (2026-10-12): npm dependency installation reported zero vulnerabilities; `npm run build` passed TypeScript checking and the Vite production build; `npm run lint` passed. Relative Markdown file targets and staged Git whitespace checks passed. Database policies, application workflows, and a hosted Vercel deployment have not been tested.
 
 ## Latest handoff: 2026-10-12
+
+The user explicitly approved all three account/access choices on 2026-10-12: Admin invitations with verified institutional email and email/password/recovery; faculty-only approval authority; restricted student/faculty/Admin read permissions. D6–D8 record the decisions. ACCOUNT_ACCESS_PLAN.md now separates approved policies from additional setup proposals; requirements amendments preserve the original specification and explicitly supersede the section 6.3 Admin exception. AGENTS.md and account/security/workflow topic documents reflect the choices. Accepted email domains, first/additional Admin provisioning, report/audit fields and retention, and other workflow questions remain open. No login, schema, or authorization implementation was added in this documentation pass.
+
+Decision documentation verification: relative Markdown links/anchors and Git whitespace checks passed. Compared the captured specification to its previous Git version (normalizing line endings) and verified the original text remains unchanged before appended amendments. Checked affected documents for stale unresolved-Q1/proposal statements. No application tests were run for this documentation-only change.
 
 Supabase setup checks (2026-10-12): read-only Auth settings request returned HTTP 200 with the supplied publishable key; dependency installation reported zero vulnerabilities; `npm run build`, `npm run lint`, and `git diff --check` passed after integration. `git check-ignore .env.local` confirmed that local project configuration is excluded from commits. No login, database, or hosted Vercel checks were performed.
 

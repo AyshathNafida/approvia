@@ -21,6 +21,7 @@ For a new coding chat, use this repository as the workspace and have the agent r
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Intended stack and conceptual component responsibilities |
 | [SECURITY.md](docs/SECURITY.md) | Authorization, request privacy, document handling, and audits |
 | [DECISIONS.md](docs/DECISIONS.md) | Established requirements, documentation choices, and open questions |
+| [ACCOUNT_ACCESS_PLAN.md](docs/ACCOUNT_ACCESS_PLAN.md) | Approved provisioning, login, and visibility rules plus remaining setup proposals |
 | [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) | Verified progress, outstanding work, and latest handoff |
 
 ## Core model

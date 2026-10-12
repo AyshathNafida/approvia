@@ -13,6 +13,8 @@ Single login → Authentication → Read account type
 
 Users do not choose their login account type. Students cannot switch themselves to Faculty or Admin. Backend authorization must deny manually accessed restricted pages/actions, alongside frontend access controls.
 
+Approved on 2026-10-12 (D6): students and faculty receive Admin invitations after institutional record checks, verify their institutional email, and use email/password login with email password recovery. Public signup is not permitted. Accepted domains and Admin provisioning remain open. ADMIN accounts cannot approve requests (D7). See [ACCOUNT_ACCESS_PLAN.md](ACCOUNT_ACCESS_PLAN.md).
+
 ## Request creation and submission
 
 1. The student creates a request and can save a draft.

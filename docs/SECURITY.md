@@ -14,9 +14,11 @@ Enforce access controls in the frontend and backend. Manually navigating to a re
 | Faculty | May process only requests assigned to them according to their responsibilities |
 | Admin | Administrative functions restricted to authorized Admin accounts; no automatic approval authority |
 
-A student must not access another student's private request without authorization. The source does not establish unrestricted faculty browsing or detailed Admin request/document read access. Those permissions must be designed explicitly.
+A student must not access another student's private request. Approved on 2026-10-12 (D8): faculty can read requests/documents for current or completed assigned approval steps, with no future-step access before their turn. Admin can read configuration, summary reports, and audit metadata, but not request contents or supporting documents. Audit/report fields must respect those content boundaries; exact fields and retention remain open. These are required policies, not implemented RLS.
 
-Approval responsibility is separate from account type. Source section 7 limits assignments to eligible faculty, while section 6.3 suggests an Admin exception. Admin approval eligibility is an [open question](DECISIONS.md#open-questions), not an implemented permission.
+Approval responsibility is separate from account type. The user resolved the section 6.3/7 conflict on 2026-10-12 (D7): only FACULTY accounts can hold approval responsibilities; ADMIN accounts cannot approve.
+
+Approved provisioning/login policy (D6): Admin invites students/faculty after institutional record checks; no public signup. Require verified institutional email, email/password login, and email password recovery. Accepted email domains and first/additional Admin provisioning remain open. See [approved decisions](DECISIONS.md#approved-product-decisions-2026-10-12).
 
 ## Workflow and data integrity
 
@@ -32,7 +34,7 @@ Transaction boundaries, duplicate/concurrent action handling, history storage me
 
 Students can upload supporting documents, and the intended storage platform is Supabase Storage. Secure document handling is a production requirement; file access must respect the applicable request and user authorization boundaries.
 
-Bucket layout, access policies, file type/size limits, upload validation, download authorization details, replacement behavior, retention, and malware handling are not specified. Do not present any of these as selected controls. See [DECISIONS.md](DECISIONS.md) for the outstanding document-policy decision.
+Document access follows the approved student/faculty/Admin visibility boundary above. Bucket layout, concrete storage policies, file type/size limits, upload validation, download implementation, replacement behavior, retention, and malware handling remain unspecified. See [DECISIONS.md](DECISIONS.md) for outstanding document-policy details.
 
 ## Audit coverage
 

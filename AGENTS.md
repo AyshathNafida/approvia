@@ -21,7 +21,8 @@ Approvia is an institutional digital approval management system for educational 
 
 - [PROJECT_REQUIREMENTS.md](docs/PROJECT_REQUIREMENTS.md) is the canonical captured specification. Other documents summarize it. Record later user-approved changes explicitly in [DECISIONS.md](docs/DECISIONS.md) and update affected requirements; do not silently rewrite project intent.
 - Account types are `STUDENT`, `FACULTY`, and `ADMIN`. Approval responsibilities are `TUTOR`, `HOD`, `DEAN`, and `PRINCIPAL`; they are separate concepts.
-- Faculty can hold one or more approval responsibilities. Admin status alone grants no approval authority. Admin approval eligibility is unresolved because source sections 6.3 and 7 conflict.
+- Faculty can hold one or more approval responsibilities. Only FACULTY accounts may approve; ADMIN accounts cannot hold approval responsibilities (user-approved Q1 resolution on 2026-10-12).
+- Accounts use Admin invitations after institutional record checks, verified institutional email, email/password login, and email recovery; no public signup. Follow the approved read boundaries in docs/ACCOUNT_ACCESS_PLAN.md.
 - Departments and classes/divisions are configurable data. Each student belongs to one active class/division; each class has one assigned tutor.
 - Resolve Tutor from the student's class, HOD from the student's department, and Dean/Principal from institution-level assignments. Never hard-code faculty identities into workflows or require students to select individual approvers.
 - Validate routes before submission against the institutional hierarchy and request-type rules; students cannot bypass mandatory authorities. Skipped-level policy remains unresolved.

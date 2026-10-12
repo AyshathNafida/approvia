@@ -41,7 +41,9 @@ Source: requirements sections 5–9, 21, and 23.
 | `FACULTY` | Faculty access; process assigned requests through eligible approval responsibilities |
 | `ADMIN` | Manage institution configuration, accounts, assignments, request types, workflow rules, academic years, reports, and system settings |
 
-Account types and approval responsibilities are separate. A faculty account may hold one or more responsibilities; changing a responsibility does not require changing its account type. Admin status grants no automatic approval authority. The source's faculty-only eligibility rule conflicts with its Admin exception; see [open question Q1](DECISIONS.md#open-questions).
+Account types and approval responsibilities are separate. A faculty account may hold one or more responsibilities; changing a responsibility does not require changing its account type. The user resolved Q1 on 2026-10-12: only FACULTY accounts may hold approval responsibilities; ADMIN accounts cannot approve. This supersedes the original section 6.3 Admin exception; see [approved decisions](DECISIONS.md#approved-product-decisions-2026-10-12).
+
+Approved provisioning uses Admin invitations after institutional record checks, verified institutional email, email/password login, and email recovery, with no public signup. Students see their own requests; faculty see current/completed assigned steps' requests; Admin sees configuration, summary reports, and audit metadata without request contents/documents. See [ACCOUNT_ACCESS_PLAN.md](ACCOUNT_ACCESS_PLAN.md) for approved boundaries and remaining setup proposals.
 
 All students share the Student account type. Class Coordinator, Student Representative, and Class Leader classifications are outside the initial model unless introduced later.
 

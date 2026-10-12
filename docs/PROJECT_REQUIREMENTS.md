@@ -1004,3 +1004,15 @@ PRINCIPAL
 ```
 
 This model forms the foundation for the Approvia database, authentication system, approval engine, and user interface.
+
+---
+
+# User-approved amendments — 2026-10-12
+
+The original 26-section specification above is retained as captured. These later approved requirements govern where they clarify or override it. The user explicitly selected each policy in this chat; rationale and remaining details are recorded in [DECISIONS.md](DECISIONS.md), D6–D8.
+
+- **D6 / Q12; sections 6 and 8:** Admin invites student and faculty accounts after checking institutional records. No public signup. Require verified institutional email; use email/password login and email-based password recovery. Accepted institutional email domains and first/additional Admin provisioning remain to be specified.
+- **D7 / Q1; sections 6.3 and 7:** Only FACULTY accounts may hold TUTOR, HOD, DEAN, or PRINCIPAL approval responsibilities. ADMIN accounts manage the system and cannot approve requests. This supersedes the original section 6.3 Admin eligibility exception and resolves its conflict with section 7.
+- **D8 / Q15 and access portion of Q13; sections 6, 18, and 23:** Students see only their own requests and associated documents/history/comments. Faculty see requests and documents for currently assigned review steps or steps they previously processed; future-step assignment does not grant access before their turn. Admin sees institutional configuration, user administration, summary reports, and audit metadata without request contents or supporting documents. Report/audit content must respect that boundary. Exact report/audit fields and retention, file validation/replacement/retention, and pending-request reassignment remain open.
+
+These amendments define required behavior; they do not claim implementation or verification of permissions.
