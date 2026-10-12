@@ -49,7 +49,11 @@ The frontend starter uses npm. After cloning, run `npm ci`, then `npm run dev` f
 
 Vercel is the selected frontend host. Import the GitHub repository and select the pushed branch. Use framework **Vite**, root directory **.**, build command **npm run build**, and output directory **dist**. The repository includes `vercel.json` with these build settings.
 
-The current starter needs no environment variables. Supabase integration remains pending; future frontend configuration may use a project URL and publishable key. Never expose server secrets in frontend variables. Local `.env` files and Vercel metadata are ignored by Git.
+The starter remains available without environment variables. To enable the Supabase client, copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` using the project's Connect dialog. Restart the development server after changing these values. The client is `null` when configuration is missing; feature code must handle this before querying Supabase. Never expose server secrets in frontend variables. Local `.env` files and Vercel metadata are ignored by Git.
+
+In Vercel, add the same two variables in Project Settings → Environment Variables for the environments intended to use this Supabase project, then redeploy. Vite embeds these public values during the build. Keep development and production data separate before institutional use.
+
+Run `node scripts/check-supabase.mjs` to verify the configured local URL/key through a read-only Auth settings request. A successful response verifies reachability and key acceptance; it does not verify login, database permissions, or approval workflows.
 
 ## Source and decision status
 

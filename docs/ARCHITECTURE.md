@@ -1,6 +1,6 @@
 # Approvia intended architecture
 
-Status: architecture from [requirements](PROJECT_REQUIREMENTS.md) sections 1, 23–26. A minimal React/TypeScript/Vite starter page and Vercel build configuration now exist. Database, storage, functions, authentication integration, and approval workflows remain planned. See [PROJECT_STATUS.md](PROJECT_STATUS.md) for verification and deployment status.
+Status: architecture from [requirements](PROJECT_REQUIREMENTS.md) sections 1, 23–26. A minimal React/TypeScript/Vite starter page, Vercel build configuration, and environment-configured Supabase browser client now exist. A read-only Auth settings check verified the supplied project URL/key. Database, storage, functions, login/account workflows, and approval workflows remain planned. See [PROJECT_STATUS.md](PROJECT_STATUS.md) for verification and deployment status.
 
 ## Technology responsibilities
 
