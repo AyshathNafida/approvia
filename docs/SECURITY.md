@@ -1,6 +1,6 @@
 # Approvia security and audit requirements
 
-Status: required controls, not implemented security. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 1, 6–8, 13–14, 18–20, and 23–25.
+Status: required controls, with MVP Supabase email/password authentication/session restoration/logout implemented. Institutional profile checks, authorization, RLS, storage policies, and audit controls remain unimplemented. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 1, 6–8, 13–14, 18–20, and 23–25. D9 defers those controls from the authentication-only MVP, which grants no application data access.
 
 ## Authentication and authorization
 

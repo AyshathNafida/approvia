@@ -44,6 +44,12 @@ The user explicitly selected all three recommended answers to the account/login,
 | D7 | Q1, Admin approval eligibility | Only FACULTY accounts may hold approval responsibilities. ADMIN accounts manage the system and cannot approve. This overrides the Admin exception in original section 6.3 and resolves the conflict with section 7. |
 | D8 | Q15, request visibility; access portion of Q13 | Students see only their own requests. Faculty see requests/documents for current or completed approval steps, with no future-step access before their turn. Admin sees configuration, summary reports, and audit metadata without request contents or supporting documents. Preserve privacy while supporting assigned review and administration. Exact report/audit fields and retention remain open. |
 
+## MVP scope decision: 2026-10-12
+
+| ID | Decision | Approval and limits |
+|---|---|---|
+| D9 | Implement only Supabase email/password authentication for the current MVP increment | User instruction: "for mvp let's only make authentication email and password(easy to login)". Include login for existing Supabase Auth users, a signed-in confirmation, session restoration, and logout. Account provisioning/invitations, recovery UI, institutional domain enforcement, role dashboards, profile checks, and RLS are deferred. D6–D8 remain approved requirements for the institutional system; this scope does not permit public signup or grant application data access from an Auth session. |
+
 ## Open questions
 
 Every question below is **unresolved**. Consult the user before implementing behavior that depends on it; none has a selected default.

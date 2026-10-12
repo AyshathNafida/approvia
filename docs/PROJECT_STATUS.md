@@ -4,13 +4,13 @@ Last updated: 2026-10-12 (user timezone: Asia/Calcutta).
 
 ## Verified repository state
 
-The repository contains the nine project context Markdown files and a minimal React/TypeScript/Vite frontend starter at the repository root. The page identifies the application as under development. npm scripts provide development, TypeScript checking plus production build, linting with Oxlint, and build preview. A dependency lockfile and Vercel build configuration are included.
+The repository contains project context documentation and a React/TypeScript/Vite MVP email/password login at the repository root. It supports login for existing Supabase users, signed-in email confirmation, restored sessions, and logout on the current device. npm scripts provide development, TypeScript checking plus production build, linting with Oxlint, Vitest authentication tests, and build preview. A dependency lockfile and Vercel build configuration are included.
 
-Git origin is configured as https://github.com/AyshathNafida/approvia.git. Initial commit `1b74e24` was pushed to `master` and its hash verified against the GitHub remote. Vercel hosting was selected by the user; a successful hosted deployment has not been verified.
+Git origin is configured as https://github.com/AyshathNafida/approvia.git. Initial commit `1b74e24` was pushed to `master` and its hash verified against the GitHub remote. Vercel hosting was selected by the user, who subsequently reported completing deployment; a successful hosted deployment has not been independently verified.
 
 The Supabase JavaScript client is installed and initialized from public environment variables when available. The user's project `cypcgwcmavauezmxdbgb` accepted the provided publishable key through a read-only Auth settings request (HTTP 200). Actual URL/key values are stored in ignored `.env.local`, with blank placeholders in `.env.example`.
 
-There is no implemented login/account workflow, physical database schema, migrations, approval engine, storage integration, notifications, or automated application test suite. Database/RLS and Vercel environment configuration remain unverified.
+Authentication UI is implemented; institutional provisioning/invitations, recovery UI, email-domain/profile enforcement, role dashboards, physical database schema, migrations, RLS, approval engine, storage integration, and notifications remain unimplemented. The signed-in screen performs no application database queries and grants no institutional data access. Vercel environment configuration remains unverified.
 
 ## Completed work
 
@@ -21,15 +21,16 @@ There is no implemented login/account workflow, physical database schema, migrat
 - Documented npm commands and deployment settings in README.md, and recorded the approved setup in DECISIONS.md.
 - Ignored dependencies, build artifacts, local environment files, and Vercel metadata.
 - Added the environment-configured Supabase browser client and a read-only local connection-check script; documented local and Vercel configuration.
+- Implemented the user-requested authentication-only MVP (D9) and added seven mocked authentication tests.
 
 ## Outstanding work
 
-1. Set the two public Supabase variables in Vercel and redeploy; verify the hosted deployment. The notice page remains available if variables are missing.
+1. Verify the updated Vercel deployment with both Supabase public variables. Prepare a development email/password user and verify live login, refresh, and logout; no real test credentials have been supplied.
 2. Confirm accepted institutional email domains and first/additional Admin provisioning, then design Supabase account/login implementation against approved D6–D8; separate production data before institutional use.
 3. Resolve dependent open questions before implementing workflow, identity, document, and access behavior.
 4. Design the physical schema, migrations, RLS/storage policies, server operations, and application structure.
 5. Implement and verify the student, faculty, and Admin capabilities, preserved history, and notifications.
-6. Select meaningful automated tests and production operational configuration.
+6. Add meaningful database/policy/workflow tests as those features are implemented and select production operational configuration.
 
 ## Verification
 
@@ -39,7 +40,11 @@ Starter checks (2026-10-12): npm dependency installation reported zero vulnerabi
 
 ## Latest handoff: 2026-10-12
 
-The user explicitly approved all three account/access choices on 2026-10-12: Admin invitations with verified institutional email and email/password/recovery; faculty-only approval authority; restricted student/faculty/Admin read permissions. D6–D8 record the decisions. ACCOUNT_ACCESS_PLAN.md now separates approved policies from additional setup proposals; requirements amendments preserve the original specification and explicitly supersede the section 6.3 Admin exception. AGENTS.md and account/security/workflow topic documents reflect the choices. Accepted email domains, first/additional Admin provisioning, report/audit fields and retention, and other workflow questions remain open. No login, schema, or authorization implementation was added in this documentation pass.
+MVP documentation links/anchors and Git whitespace checks passed after updating the scope and implemented-capability descriptions.
+
+Latest increment: the user limited MVP work to easy email/password authentication. D9 records that scope. Login/logout, session restoration, clear error/loading states, password visibility, and a signed-in confirmation are implemented. Missing configuration disables login. Seven mocked Vitest tests passed, covering successful login, invalid credentials, network errors, restored sessions/logout, logout failure, a session-restoration race, and missing configuration. TypeScript/production build and lint passed. Desktop login layout was inspected in the local browser. No real-user login, reload persistence against Supabase, hosted deployment, or institutional permissions were verified. The test runner required sandbox escalation after a temporary-file permission failure; the rerun passed.
+
+The user explicitly approved all three account/access choices on 2026-10-12: Admin invitations with verified institutional email and email/password/recovery; faculty-only approval authority; restricted student/faculty/Admin read permissions. D6–D8 record the decisions. ACCOUNT_ACCESS_PLAN.md now separates approved policies from additional setup proposals; requirements amendments preserve the original specification and explicitly supersede the section 6.3 Admin exception. AGENTS.md and account/security/workflow topic documents reflect the choices. Accepted email domains, first/additional Admin provisioning, report/audit fields and retention, and other workflow questions remain open. No login, schema, or authorization implementation was added in that earlier documentation pass.
 
 Decision documentation verification: relative Markdown links/anchors and Git whitespace checks passed. Compared the captured specification to its previous Git version (normalizing line endings) and verified the original text remains unchanged before appended amendments. Checked affected documents for stale unresolved-Q1/proposal statements. No application tests were run for this documentation-only change.
 

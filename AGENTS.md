@@ -23,6 +23,7 @@ Approvia is an institutional digital approval management system for educational 
 - Account types are `STUDENT`, `FACULTY`, and `ADMIN`. Approval responsibilities are `TUTOR`, `HOD`, `DEAN`, and `PRINCIPAL`; they are separate concepts.
 - Faculty can hold one or more approval responsibilities. Only FACULTY accounts may approve; ADMIN accounts cannot hold approval responsibilities (user-approved Q1 resolution on 2026-10-12).
 - Accounts use Admin invitations after institutional record checks, verified institutional email, email/password login, and email recovery; no public signup. Follow the approved read boundaries in docs/ACCOUNT_ACCESS_PLAN.md.
+- Current MVP increment (D9) implements only email/password login, signed-in confirmation, session restoration, and logout for existing Supabase users. Invitations/recovery UI, domain/profile enforcement, and role access are deferred; an Auth session alone grants no institutional data access.
 - Departments and classes/divisions are configurable data. Each student belongs to one active class/division; each class has one assigned tutor.
 - Resolve Tutor from the student's class, HOD from the student's department, and Dean/Principal from institution-level assignments. Never hard-code faculty identities into workflows or require students to select individual approvers.
 - Validate routes before submission against the institutional hierarchy and request-type rules; students cannot bypass mandatory authorities. Skipped-level policy remains unresolved.

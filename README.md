@@ -6,7 +6,7 @@ The goal is real deployment in a college, with security, data integrity, maintai
 
 ## Current state
 
-This repository contains the project context documentation and a minimal React/TypeScript/Vite starter page. Authentication, database, approval workflows, and supporting services are not implemented. See [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for verified progress.
+This repository contains the project context documentation and an MVP Supabase email/password login, signed-in confirmation, session restoration, and logout. Institutional accounts/roles, database policies, approval workflows, and supporting services are not implemented. See [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for verified progress.
 
 ## Start here
 
@@ -44,17 +44,23 @@ Departments, classes, faculty assignments, request types, and workflow rules are
 | Server-side business logic | Supabase Edge Functions; PostgreSQL Functions where appropriate |
 | Version control | Git, GitHub |
 
-The frontend starter uses npm. After cloning, run `npm ci`, then `npm run dev` for development. Run `npm run build` for TypeScript checking and a production build, `npm run lint` for linting, and `npm run preview` to serve the build locally. No automated application test suite has been selected yet.
+The frontend uses npm. After cloning, run `npm ci`, then `npm run dev` for development. Run `npm run build` for TypeScript checking and a production build, `npm run lint` for linting, `npm run test` for the Vitest authentication tests, and `npm run preview` to serve the build locally. Tests use mocked Supabase responses; they do not replace live credential or database-policy verification.
 
 ## Frontend deployment
 
 Vercel is the selected frontend host. Import the GitHub repository and select the pushed branch. Use framework **Vite**, root directory **.**, build command **npm run build**, and output directory **dist**. The repository includes `vercel.json` with these build settings.
 
-The starter remains available without environment variables. To enable the Supabase client, copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` using the project's Connect dialog. Restart the development server after changing these values. The client is `null` when configuration is missing; feature code must handle this before querying Supabase. Never expose server secrets in frontend variables. Local `.env` files and Vercel metadata are ignored by Git.
+To enable login, copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` using the project's Connect dialog. Restart the development server after changing these values. Without configuration, login is disabled with an availability message. Never expose server secrets in frontend variables. Local `.env` files and Vercel metadata are ignored by Git.
 
 In Vercel, add the same two variables in Project Settings → Environment Variables for the environments intended to use this Supabase project, then redeploy. Vite embeds these public values during the build. Keep development and production data separate before institutional use.
 
 Run `node scripts/check-supabase.mjs` to verify the configured local URL/key through a read-only Auth settings request. A successful response verifies reachability and key acceptance; it does not verify login, database permissions, or approval workflows.
+
+## MVP login verification
+
+Use an existing email/password user from this Supabase project to test login, refresh/session restoration, and logout. A project owner can prepare a development-only test user through Supabase Authentication → Users; no public signup or account-creation UI is included. Keep credentials private. Invitation/account provisioning remains a separate implementation step under D6.
+
+The signed-in screen displays the authenticated email only. It grants no Student, Faculty, or Admin capabilities and performs no application database queries. Password recovery UI and institutional profile/domain enforcement are deferred by the approved authentication-only MVP scope (D9).
 
 ## Source and decision status
 

@@ -1,8 +1,10 @@
 # Approvia workflows
 
-Status: required behavior and illustrative flows; no approval engine or UI exists yet. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 6, 8–14, 16–20, 22, and 26. Unsettled behavior is tracked in [DECISIONS.md](DECISIONS.md).
+Status: required behavior and illustrative flows. An MVP email/password login, signed-in confirmation, session restoration, and logout exist; no approval engine or request UI exists. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 6, 8–14, 16–20, 22, and 26. Unsettled behavior is tracked in [DECISIONS.md](DECISIONS.md).
 
 ## Login and dashboard routing
+
+The current MVP implements authentication only (D9). The account lookup/dashboard routing below is planned institutional behavior. The signed-in confirmation does not assign a role or authorize application data access.
 
 ```text
 Single login → Authentication → Read account type

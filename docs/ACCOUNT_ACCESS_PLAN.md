@@ -1,6 +1,6 @@
 # Approvia account and access plan
 
-Date: 2026-10-12. Status: **core policies approved; implementation pending**. The user selected Admin invitations/email-password login, faculty-only approval authority, and restricted read permissions. [DECISIONS.md](DECISIONS.md) D6–D8 record approval and rationale. Additional technical proposals and remaining questions below are not approved by those selections. Requirements sections 5–10 and 23–24 supply the original context.
+Date: 2026-10-12. Status: **core policies approved; institutional permissions implementation pending**. The user selected Admin invitations/email-password login, faculty-only approval authority, and restricted read permissions. [DECISIONS.md](DECISIONS.md) D6–D8 record approval and rationale. D9 limits the current MVP increment to email/password authentication, session restoration, signed-in confirmation, and logout for existing Supabase users. Provisioning, recovery UI, domain/profile checks, and role dashboards are deferred; an Auth session grants no institutional data access. Additional technical proposals and remaining questions below are not approved by those selections. Requirements sections 5–10 and 23–24 supply the original context.
 
 ## Approved account provisioning (D6/Q12)
 
@@ -39,7 +39,7 @@ Admin audit views must omit request/document contents and comment bodies to resp
 1. Confirm accepted institutional email domains and the first/additional Admin provisioning process.
 2. Design profile, institutional membership, and responsibility-assignment migrations with RLS policies.
 3. Establish controlled first-Admin setup and account invitations, including email delivery and redirect configuration.
-4. Implement single login, recovery, protected dashboards, and active-profile checks.
+4. Extend the existing single login with recovery, protected dashboards, and active-profile checks.
 5. Verify denied access across account types, self-promotion attempts, inactive accounts, and unrelated users' records.
 
 No request schema, approval state machine, RLS/storage access policy, or production account has been created in this planning pass.
