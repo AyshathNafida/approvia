@@ -44,3 +44,7 @@ These files establish the project context. The MVP and local Admin increment hav
 - Update topic documents and requirements affected by approved changes. Record user-agreed decisions and their rationale in [DECISIONS.md](docs/DECISIONS.md).
 - Keep requirements, examples, proposed designs, verified implementation, and unresolved questions clearly labeled. Include source section references when summarizing requirements.
 - Validate links and consistency when changing documentation. Record checks actually performed; do not report future checks as completed.
+
+## D15 workflow extension (2026-10-14)
+
+D15 approves typed General/Leave/Duty Leave/Event/Facility/Internship requests, fixed scope-based multi-step routes, structured fields, distinct Faculty per required role, immediate rejection and skipped steps, full submission snapshots, scoped current/future step transfer for all responsibilities, and current-holder access to final predecessor-reviewed requests in the saved scope. Read docs/REQUEST_WORKFLOWS.md before changing this area and PROJECT_STATUS.md for actual hosted rollout. This supersedes earlier Tutor-only constraints and expands D8 archive visibility; Admin still cannot read private request content. Do not infer custom routes, referral, attachments, group requests or editable submissions.

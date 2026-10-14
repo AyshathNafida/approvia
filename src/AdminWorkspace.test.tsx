@@ -84,7 +84,7 @@ describe('Admin workspace', () => {
     expect((screen.getByLabelText('Full name') as HTMLInputElement).value).toBe('Missing Faculty')
   })
 
-  it('assigns HOD to a department and indicates higher-level processing is deferred', async () => {
+  it('assigns HOD to a department and explains distinct route reviewers', async () => {
     render(<AdminWorkspace profile={admin} />)
     const user = userEvent.setup()
     await screen.findByText('Setup checks')
@@ -96,7 +96,7 @@ describe('Admin workspace', () => {
     await user.click(screen.getByRole('button', { name: 'Save assignment' }))
     expect(api.assignResponsibility).toHaveBeenCalledWith('HOD', 'department', 'replacement', 'New HOD appointment')
     expect(await screen.findByText('Assignment saved. 2 pending requests transferred.')).toBeTruthy()
-    expect(screen.getByText(/Requests currently use Tutor review only/)).toBeTruthy()
+    expect(screen.getByText(/Each required role on a route needs a different Faculty member/)).toBeTruthy()
   })
 
   it('discards configuration on a failed authorization refresh', async () => {

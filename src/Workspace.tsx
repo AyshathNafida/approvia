@@ -2,10 +2,11 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { decideRequest, loadProfile, loadRequests, loadRequestTypes, submitRequest, type ApprovalRequest, type Profile, type RequestType, type RequestStatus } from './lib/requests'
 import './Workspace.css'
 import AdminWorkspace from './AdminWorkspace'
+import { formFields, routeFor, validateFields, fieldDisplay } from './lib/requestForms'
 
 const labels: Record<RequestStatus, string> = { IN_REVIEW: 'In review', APPROVED: 'Approved', REJECTED: 'Rejected' }
 const actionOrder = { SUBMITTED: 0, REASSIGNED: 1, APPROVED: 2, REJECTED: 2 }
-const formatDate = (date: string) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date))
+const formatDate = (date: string) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' }).format(new Date(date))
 const message = (error: unknown) => error instanceof Error ? error.message : 'Something went wrong. Please try again.'
 
 export default function Workspace({ userId }: { userId: string }) {
@@ -22,10 +23,14 @@ export default function Workspace({ userId }: { userId: string }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [typeId, setTypeId] = useState('')
+  const [fields, setFields] = useState<Record<string, string>>({})
   const [comment, setComment] = useState('')
   const [actionError, setActionError] = useState('')
   const generation = useRef({ value: 0 })
   const selected = requests.find((request) => request.id === selectedId)
+  const selectedType = types.find(type => type.id === typeId)
+  const formKind = selectedType?.form_kind ?? 'general'
+  const submissionRoute = routeFor(formKind, fields)
 
   const refresh = useCallback(async (initial = false) => {
     const version = ++generation.current.value
@@ -68,11 +73,13 @@ export default function Workspace({ userId }: { userId: string }) {
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (busy || !title.trim() || !description.trim() || !typeId) return
+    const invalid = validateFields(formKind, fields)
+    if (invalid) { setActionError(invalid); return }
     setBusy(true); setActionError(''); setNotice('')
     try {
-      const id = await submitRequest(title.trim(), description.trim(), typeId)
-      setTitle(''); setDescription(''); setSelectedId(id); setFilter('ALL')
-      setNotice('Your request was submitted to your class Tutor.')
+      const id = await submitRequest(title.trim(), description.trim(), typeId, fields)
+      setTitle(''); setDescription(''); setFields({}); setSelectedId(id); setFilter('ALL')
+      setNotice(`Your request was submitted for ${submissionRoute.join(' → ')} review.`)
       await refresh()
     } catch (failure) { setActionError(message(failure)) }
     finally { setBusy(false) }
@@ -85,7 +92,8 @@ export default function Workspace({ userId }: { userId: string }) {
     try {
       await decideRequest(selected.id, decision, comment.trim())
       setComment('')
-      setNotice(`The request was ${decision === 'APPROVED' ? 'approved' : 'rejected'}.`)
+      const next = selected.approval_steps.find(step => step.position === selected.current_position + 1)
+      setNotice(decision === 'REJECTED' ? 'The request was rejected. Remaining reviews have stopped.' : next ? `Your approval was saved. The request now awaits ${next.responsibility} review.` : 'The request was approved. All required reviews are complete.')
       await refresh()
     } catch (failure) {
       setActionError(message(failure))
@@ -101,18 +109,20 @@ export default function Workspace({ userId }: { userId: string }) {
 
   const student = profile.account_type === 'STUDENT'
   const visibleRequests = requests.filter((request) => filter === 'ALL' || request.status === filter)
-  const canDecide = !student && selected?.status === 'IN_REVIEW' && selected.approval_steps.some((step) => step.approver_id === userId && step.status === 'PENDING')
+  const canDecide = !student && selected?.status === 'IN_REVIEW' && selected.approval_steps.some((step) => step.approver_id === userId && step.status === 'PENDING' && step.position === (selected.current_position ?? 1))
 
   return (
     <div className="workspace">
-      <div className="workspace-heading"><div><p className="eyebrow">{student ? 'Student workspace' : 'Tutor workspace'}</p><h1>Hello, {profile.full_name}.</h1><p>{student ? 'Submit a request and follow its progress.' : 'Review the requests assigned to you.'}</p></div><button className="secondary-button" onClick={() => void refresh()} disabled={refreshing || busy}>{refreshing ? 'Refreshing…' : 'Refresh'}</button></div>
+      <div className="workspace-heading"><div><p className="eyebrow">{student ? 'Student workspace' : 'Faculty workspace'}</p><h1>Hello, {profile.full_name}.</h1><p>{student ? 'Submit a request and follow its progress.' : 'Review assigned requests and view completed history for your responsibilities.'}</p></div><button className="secondary-button" onClick={() => void refresh()} disabled={refreshing || busy}>{refreshing ? 'Refreshing…' : 'Refresh'}</button></div>
       <div className="stats"><div><strong>{requests.length}</strong><span>Total requests</span></div><div><strong>{requests.filter((request) => request.status === 'IN_REVIEW').length}</strong><span>In review</span></div><div><strong>{requests.filter((request) => request.status === 'APPROVED').length}</strong><span>Approved</span></div></div>
       {notice && <p className="success-message" role="status">{notice}</p>}
       <div className="workspace-grid">
         <div className="workspace-column">
           {student && <section className="panel"><p className="eyebrow">New request</p><h2>What do you need approved?</h2><form onSubmit={create}>
-            <label htmlFor="request-type">Request type</label><select id="request-type" value={typeId} onChange={(event) => setTypeId(event.target.value)} disabled={busy || !types.length}>{types.map((type) => <option key={type.id} value={type.id}>{type.name}</option>)}</select>
-            <p className="field-note">Approval route: {types.find((type) => type.id === typeId)?.approval_route.join(' → ') ?? 'Unavailable'}. Your class Tutor is assigned automatically.</p>
+            <label htmlFor="request-type">Request type</label><select id="request-type" value={typeId} onChange={(event) => { setTypeId(event.target.value); setFields({}); setActionError('') }} disabled={busy || !types.length}>{types.map((type) => <option key={type.id} value={type.id}>{type.name}</option>)}</select>
+            <p className="field-note">Approval route: {submissionRoute.length ? submissionRoute.join(' → ') : 'Choose the scope to see the route'}. Faculty are assigned automatically.</p>
+            {formFields[formKind].map(field => <div key={field.key}><label htmlFor={`field-${field.key}`}>{field.label}</label>{field.type === 'select' ? <select id={`field-${field.key}`} required disabled={busy} value={fields[field.key] ?? ''} onChange={event => setFields({ ...fields, [field.key]: event.target.value })}><option value="">Choose {field.label.toLowerCase()}</option>{field.options?.map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select> : <input id={`field-${field.key}`} type={field.type} required disabled={busy} maxLength={200} value={fields[field.key] ?? ''} onChange={event => setFields({ ...fields, [field.key]: event.target.value })} />}</div>)}
+            {['event', 'facility'].includes(formKind) && <p className="field-note">Enter dates and times in college-local time (Asia/Kolkata).</p>}
             <label htmlFor="request-title">Title</label><input id="request-title" maxLength={140} value={title} onChange={(event) => setTitle(event.target.value)} placeholder="A short summary of your request" required disabled={busy} />
             <label htmlFor="request-description">Description</label><textarea id="request-description" maxLength={5000} rows={4} value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Explain what you need and why." required disabled={busy} />
             <p className="field-note">Check your details before submitting. Submitted requests cannot be edited in this version.</p>
@@ -126,11 +136,11 @@ export default function Workspace({ userId }: { userId: string }) {
         <section className="panel detail-panel" aria-label="Request details">
           {!selected ? <div className="empty-detail"><span aria-hidden="true">↗</span><h2>Every decision, in one place.</h2><p>Select a request to see its details, progress, and decision history.</p></div> : <>
             <div className="detail-heading"><p className="eyebrow">Request details</p><span className={`badge ${selected.status.toLowerCase()}`}>{labels[selected.status]}</span></div><h2>{selected.title}</h2><p className="request-reference">Reference {selected.id.slice(0, 8).toUpperCase()}</p>
-            <dl className="request-info"><div><dt>Student</dt><dd>{selected.student_name}</dd></div><div><dt>Class / department</dt><dd>{selected.class_name} · {selected.department_name}</dd></div><div><dt>Submitted</dt><dd>{formatDate(selected.created_at)}</dd></div></dl>
+            <dl className="request-info"><div><dt>Request type</dt><dd>{selected.type_name ?? 'General Request'}</dd></div><div><dt>Student</dt><dd>{selected.student_name}</dd></div><div><dt>Class / department</dt><dd>{selected.class_name} · {selected.department_name}</dd></div><div><dt>Submitted</dt><dd>{formatDate(selected.created_at)}</dd></div>{(selected.form_snapshot?.fields ?? formFields[selected.form_snapshot?.kind ?? 'general'] ?? []).map(field => <div key={field.key}><dt>{field.label}</dt><dd>{fieldDisplay(field, selected.fields[field.key])}</dd></div>)}</dl>
             <h3>Description</h3><p className="request-description">{selected.description}</p>
-            <div className="approval-progress"><span>Tutor review</span><strong>{selected.status === 'IN_REVIEW' ? 'Awaiting decision' : labels[selected.status]}</strong></div>
+            <h3>Approval progress</h3><ol className="history-list" aria-label="Approval progress">{[...selected.approval_steps].sort((a,b) => a.position - b.position).map(step => <li key={step.id}><strong>{step.responsibility} · {step.status === 'PENDING' ? (step.position === (selected.current_position ?? 1) ? 'Awaiting decision' : 'Waiting for earlier approvals') : step.status === 'SKIPPED' ? 'Not reached' : step.status === 'APPROVED' ? 'Approved' : 'Rejected'}</strong><span>{step.approver_name}</span></li>)}</ol>
             {canDecide && <div className="decision-form"><label htmlFor="decision-comment">Decision comment</label><textarea id="decision-comment" maxLength={2000} rows={3} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Explain your approval or rejection." disabled={busy} required /><div className="decision-buttons"><button className="primary-button" onClick={() => void decide('APPROVED')} disabled={busy}>Approve</button><button className="reject-button" onClick={() => void decide('REJECTED')} disabled={busy}>Reject</button></div>{busy && <p role="status">Saving your decision…</p>}{actionError && <p className="error" role="alert">{actionError}</p>}</div>}
-            <h3>Activity history</h3><ol className="history-list" aria-label="Activity history">{[...selected.request_actions].sort((a, b) => a.created_at.localeCompare(b.created_at) || actionOrder[a.action] - actionOrder[b.action]).map((action) => <li key={action.id}><strong>{action.action === 'SUBMITTED' ? 'Submitted' : action.action === 'APPROVED' ? 'Approved' : action.action === 'REASSIGNED' ? 'Tutor reassigned' : 'Rejected'}</strong><span>{action.actor_name}{action.responsibility ? ` · ${action.responsibility}` : ''} · {formatDate(action.created_at)}</span>{action.comment && <p>{action.comment}</p>}</li>)}</ol>
+            <h3>Activity history</h3><ol className="history-list" aria-label="Activity history">{[...selected.request_actions].sort((a, b) => a.history_order && b.history_order ? a.history_order - b.history_order : a.created_at.localeCompare(b.created_at) || actionOrder[a.action] - actionOrder[b.action]).map((action) => <li key={action.id}><strong>{action.action === 'SUBMITTED' ? 'Submitted' : action.action === 'APPROVED' ? 'Approved' : action.action === 'REASSIGNED' ? `${action.responsibility === 'TUTOR' ? 'Tutor' : action.responsibility ?? 'Reviewer'} reassigned` : 'Rejected'}</strong><span>{action.actor_name}{action.responsibility ? ` · ${action.responsibility}` : ''} · {formatDate(action.created_at)}</span>{action.comment && <p>{action.comment}</p>}</li>)}</ol>
           </>}
         </section>
       </div>

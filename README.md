@@ -26,6 +26,7 @@ For a new coding chat, use this repository as the workspace and have the agent r
 | [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) | Verified progress, outstanding work, and latest handoff |
 | [ADMIN_SETUP.md](docs/ADMIN_SETUP.md) | Admin increment, guarded assignments/reassignment, owner rollout, and acceptance checks |
 | [INSTITUTIONAL_ROUTING_PLAN.md](docs/INSTITUTIONAL_ROUTING_PLAN.md) | Cohort/authority routing proposal and approved D12/D13 rules |
+| [REQUEST_WORKFLOWS.md](docs/REQUEST_WORKFLOWS.md) | D15 catalogue, structured forms, sequential approvals, replacements and archive visibility |
 
 ## Core model
 
@@ -72,3 +73,7 @@ For the new Admin increment, follow [ADMIN_SETUP.md](docs/ADMIN_SETUP.md). Prese
 [PROJECT_REQUIREMENTS.md](docs/PROJECT_REQUIREMENTS.md) preserves the full contents of `C:/Users/mahmo/Desktop/approvia/doc/doc.txt`, captured on 2026-10-09. The original file was left unchanged. The repository copy makes future chats independent of that desktop path.
 
 Topic documents summarize the source and label examples and planned architecture. [DECISIONS.md](docs/DECISIONS.md) records unresolved rules rather than choosing answers. Later user-approved changes must be recorded there and reflected in the affected documentation.
+
+## Typed-request extension (D15)
+
+The approved catalogue and routes are documented in [REQUEST_WORKFLOWS.md](docs/REQUEST_WORKFLOWS.md). The local implementation adds structured forms, sequential reviews, all-responsibility pending transfer and scoped completed-history access. Read PROJECT_STATUS.md for actual hosted migration, frontend deployment, catalogue activation and verification status. New types start inactive during rollout. Never rerun any applied migration; continue the owner-controlled development deployment process.

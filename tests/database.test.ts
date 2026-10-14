@@ -30,6 +30,7 @@ beforeAll(async () => {
   `)
   await db.exec(readFileSync(new URL('../supabase/migrations/202610120001_small_mvp.sql', import.meta.url), 'utf8'))
   await db.exec(readFileSync(new URL('../supabase/migrations/202610140001_admin_setup.sql', import.meta.url), 'utf8'))
+  await db.exec(readFileSync(new URL('../supabase/migrations/202610140002_request_workflows.sql', import.meta.url), 'utf8'))
   for (const id of [ids.student, ids.otherStudent, ids.tutor, ids.otherFaculty, ids.admin, ids.unconfigured]) {
     await db.query('insert into auth.users(id, email, email_confirmed_at) values ($1, $2, now())', [id, `${id}@example.test`])
   }
@@ -121,13 +122,13 @@ describe('actual PostgreSQL MVP operations and RLS', () => {
       await db.exec('reset role')
       await db.query('update public.classes set tutor_id = $1 where id = $2', [tutorId, ids.class])
       await asUser(ids.student)
-      await denied('select public.submit_request($1, $2, $3)', ['Title', 'Details', typeId], /active department and faculty Tutor/)
+      await denied('select public.submit_request($1, $2, $3)', ['Title', 'Details', typeId], /active faculty TUTOR/)
     }
     await db.exec('reset role')
     await db.query('update public.classes set tutor_id = $1 where id = $2', [ids.tutor, ids.class])
     await db.query('update public.profiles set active = false where id = $1', [ids.tutor])
     await asUser(ids.student)
-    await denied('select public.submit_request($1, $2, $3)', ['Title', 'Details', typeId], /active department and faculty Tutor/)
+    await denied('select public.submit_request($1, $2, $3)', ['Title', 'Details', typeId], /active faculty TUTOR/)
   })
 
   it('blocks inactive users from reading or deciding their requests', async () => {
@@ -235,7 +236,7 @@ describe('Admin configuration and reassignment', () => {
     expect((await db.query<{ id: string }>('select id from requests')).rows.map(r => r.id)).toEqual([completed])
     await denied("select public.decide_request($1,'APPROVED','Old reviewer')", [first], /not assigned/)
     await asUser(ids.otherFaculty)
-    expect((await db.query('select * from requests')).rows).toHaveLength(2)
+    expect((await db.query('select * from requests')).rows).toHaveLength(3)
     const reassignment = (await db.query<{ previous_faculty_id: string; faculty_id: string }>('select previous_faculty_id,faculty_id from request_reassignments')).rows
     expect(reassignment).toHaveLength(2)
     expect(reassignment[0]).toEqual({ previous_faculty_id: ids.tutor, faculty_id: ids.otherFaculty })
@@ -258,7 +259,7 @@ describe('Admin configuration and reassignment', () => {
     await denied("select public.admin_save_class($1,$2,'Should not persist',2026,2030,true,$3,' ')", [ids.class, ids.department, ids.otherFaculty], /reason is required/)
     expect((await db.query<{ name: string; tutor_id: string }>('select name,tutor_id from classes where id=$1', [ids.class])).rows[0]).toEqual({ name: 'Test Class', tutor_id: ids.tutor })
     expect((await db.query('select * from responsibility_changes')).rows).toHaveLength(0)
-    await denied("select public.admin_assign_responsibility('TUTOR',$1,null,'Remove')", [ids.class], /replacement Tutor/)
+    await denied("select public.admin_assign_responsibility('TUTOR',$1,null,'Remove')", [ids.class], /replacement TUTOR/)
     await asUser(ids.student)
     expect((await db.query('select * from request_reassignments')).rows).toHaveLength(0)
   })
@@ -353,9 +354,9 @@ describe('Admin configuration and reassignment', () => {
 
   it('requires the same transaction serialization gate in every application write entrypoint', async () => {
     await db.exec('reset role')
-    const operations = await db.query<{ proname: string; prosrc: string }>("select proname,prosrc from pg_proc join pg_namespace n on n.oid=pronamespace where n.nspname='public' and (proname like 'admin_%' or proname in ('submit_request','decide_request'))")
-    expect(operations.rows).toHaveLength(8)
-    for (const operation of operations.rows) expect(operation.prosrc).toMatch(/admin_guard\(\)|pg_advisory_xact_lock\(20261014, 1\)/)
+    const operations = await db.query<{ proname: string; prosrc: string }>("select proname,prosrc from pg_proc join pg_namespace n on n.oid=pronamespace where n.nspname='public' and (proname like 'admin_%' or proname in ('submit_request','submit_typed_request','decide_request'))")
+    expect(operations.rows).toHaveLength(9)
+    for (const operation of operations.rows) expect(operation.prosrc).toMatch(/admin_guard\(\)|pg_advisory_xact_lock\(20261014,\s*1\)/)
     const guard = await db.query<{ prosrc: string }>("select prosrc from pg_proc join pg_namespace n on n.oid=pronamespace where n.nspname='approvia_private' and proname='admin_guard'")
     expect(guard.rows[0].prosrc).toContain('pg_advisory_xact_lock(20261014, 1)')
   })
