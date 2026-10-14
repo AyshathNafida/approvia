@@ -4,6 +4,7 @@ import './Workspace.css'
 import AdminWorkspace from './AdminWorkspace'
 
 const labels: Record<RequestStatus, string> = { IN_REVIEW: 'In review', APPROVED: 'Approved', REJECTED: 'Rejected' }
+const actionOrder = { SUBMITTED: 0, REASSIGNED: 1, APPROVED: 2, REJECTED: 2 }
 const formatDate = (date: string) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date))
 const message = (error: unknown) => error instanceof Error ? error.message : 'Something went wrong. Please try again.'
 
@@ -129,7 +130,7 @@ export default function Workspace({ userId }: { userId: string }) {
             <h3>Description</h3><p className="request-description">{selected.description}</p>
             <div className="approval-progress"><span>Tutor review</span><strong>{selected.status === 'IN_REVIEW' ? 'Awaiting decision' : labels[selected.status]}</strong></div>
             {canDecide && <div className="decision-form"><label htmlFor="decision-comment">Decision comment</label><textarea id="decision-comment" maxLength={2000} rows={3} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Explain your approval or rejection." disabled={busy} required /><div className="decision-buttons"><button className="primary-button" onClick={() => void decide('APPROVED')} disabled={busy}>Approve</button><button className="reject-button" onClick={() => void decide('REJECTED')} disabled={busy}>Reject</button></div>{busy && <p role="status">Saving your decision…</p>}{actionError && <p className="error" role="alert">{actionError}</p>}</div>}
-            <h3>Activity history</h3><ol className="history-list">{[...selected.request_actions].sort((a, b) => a.created_at.localeCompare(b.created_at) || (a.action === 'SUBMITTED' ? -1 : 1)).map((action) => <li key={action.id}><strong>{action.action === 'SUBMITTED' ? 'Submitted' : action.action === 'APPROVED' ? 'Approved' : action.action === 'REASSIGNED' ? 'Tutor reassigned' : 'Rejected'}</strong><span>{action.actor_name}{action.responsibility ? ` · ${action.responsibility}` : ''} · {formatDate(action.created_at)}</span>{action.comment && <p>{action.comment}</p>}</li>)}</ol>
+            <h3>Activity history</h3><ol className="history-list" aria-label="Activity history">{[...selected.request_actions].sort((a, b) => a.created_at.localeCompare(b.created_at) || actionOrder[a.action] - actionOrder[b.action]).map((action) => <li key={action.id}><strong>{action.action === 'SUBMITTED' ? 'Submitted' : action.action === 'APPROVED' ? 'Approved' : action.action === 'REASSIGNED' ? 'Tutor reassigned' : 'Rejected'}</strong><span>{action.actor_name}{action.responsibility ? ` · ${action.responsibility}` : ''} · {formatDate(action.created_at)}</span>{action.comment && <p>{action.comment}</p>}</li>)}</ol>
           </>}
         </section>
       </div>

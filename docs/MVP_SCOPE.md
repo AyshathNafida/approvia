@@ -2,7 +2,7 @@
 
 Date: 2026-10-12; status updated 2026-10-14. Status: **approved scope (D10); implemented, deployed MVP confirmed working by the user**. The agent has not independently repeated live browser testing in this chat. The user explicitly selected the smaller flow and simple rules below. This expands the authentication-only increment D9; the larger institutional requirements remain future scope.
 
-Subsequent increment: D14 adds Admin setup/assignment management and explicit pending Tutor transfer, implemented/tested locally with hosted rollout pending. This document retains the original D10 scope; [ADMIN_SETUP.md](ADMIN_SETUP.md) describes the extension and the D10 pending-retention exception it supersedes.
+Subsequent increment: D14 adds deployed Admin setup/assignment management and explicit pending Tutor transfer, with hosted RPC/RLS checks and user-confirmed Admin login. This document retains the original D10 scope; [ADMIN_SETUP.md](ADMIN_SETUP.md) describes the extension and the D10 pending-retention exception it supersedes.
 
 ## Approved first complete flow
 

@@ -6,7 +6,7 @@ Status: required institutional behavior and illustrative flows, with D10's Gener
 
 The current MVP expands D9 with D10. Login loads the protected active profile: Student opens request submission/tracking; Faculty opens assigned Tutor reviews. Missing profiles receive setup guidance, inactive profiles are blocked, and Admin receives a placeholder without request contents or approval functions. Full Admin account-management and invitation screens remain planned.
 
-D14 replaces the Admin placeholder with a configuration workspace: departments, four-year class batches, existing confirmed-user profile setup, student placement/status, and faculty responsibilities. The hosted migration and owner-bootstrap are applied; frontend deployment/browser acceptance are in progress. Invitations and multi-level processing remain deferred. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
+D14 replaces the Admin placeholder with a configuration workspace: departments, four-year class batches, existing confirmed-user profile setup, student placement/status, and faculty responsibilities. The hosted migration and owner-bootstrap are applied; the frontend is deployed and Admin login/dashboard access is user-confirmed in Chrome. Full browser role-switching/reassignment acceptance remains pending. Invitations and multi-level processing remain deferred. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
 
 ```text
 Single login → Authentication → Read account type

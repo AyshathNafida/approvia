@@ -54,7 +54,7 @@ The new migration extends the existing schema rather than replacing the baseline
 
 The existing public submit/decision signatures remain stable. Baseline implementations move to the private schema with authenticated execution revoked; public wrappers and Admin operations share a transaction advisory write gate. This serializes test-increment writes and prevents races between assignment/status edits, submission, and decisions. Production lock granularity and throughput remain future verification/design work. Tutor replacement changes only pending current steps and records reassignment history; RLS automatically removes old pending-review access and grants the replacement access. Admin still cannot read request contents or request-specific history.
 
-An Admin workspace and typed configuration client supplement the existing Student/Faculty workspaces. Higher authority assignments are not processing capability. Owner bootstrap and hosted migration/RPC/RLS smoke verification are complete. Frontend deployment and hosted concurrency/browser acceptance remain pending; [ADMIN_SETUP.md](ADMIN_SETUP.md) is the rollout guide.
+An Admin workspace and typed configuration client supplement the existing Student/Faculty workspaces. Higher authority assignments are not processing capability. Owner bootstrap, hosted migration/RPC/RLS smoke verification, frontend deployment, and a hosted two-session write-gate check are complete. Admin password login/dashboard access is user-confirmed in Chrome. Broader concurrency/load and full role-switching browser acceptance remain pending; [ADMIN_SETUP.md](ADMIN_SETUP.md) is the rollout guide.
 
 ## Remaining design after D14
 

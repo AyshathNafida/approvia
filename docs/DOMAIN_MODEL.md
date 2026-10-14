@@ -24,7 +24,7 @@ Classes/divisions are distinct from departments. A department may have one or mo
 
 Approved on 2026-10-14 (D12): a class identifies a specific batch/cohort whose Tutor continues through the four-year course. Annual progression does not replace the Tutor. Cohort/year records and membership history remain proposed schema extensions; the MVP currently stores one class and Tutor reference without those lifecycle records.
 
-D14 implementation update: the applied Admin migration adds four-year batch fields to existing class records, submission-time request class IDs, scoped HOD/Dean/Principal assignments, responsibility-change history, and request-reassignment history. `classes.tutor_id` remains the current Tutor source. Annual progression/membership lifecycle records remain deferred. The hosted backend has the eight core MVP tables plus three Admin/reassignment tables; frontend deployment is in progress. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
+D14 implementation update: the applied Admin migration adds four-year batch fields to existing class records, submission-time request class IDs, scoped HOD/Dean/Principal assignments, responsibility-change history, and request-reassignment history. `classes.tutor_id` remains the current Tutor source. Annual progression/membership lifecycle records remain deferred. The hosted backend has the eight core MVP tables plus three Admin/reassignment tables; the frontend is deployed with user-confirmed Admin access. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
 
 | Responsibility | Assignment scope | Person resolved from |
 |---|---|---|

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Workspace from './Workspace'
 
@@ -26,6 +26,21 @@ beforeEach(() => {
 afterEach(cleanup)
 
 describe('small request workspace', () => {
+  it('orders tied submission, reassignment, and final decision history correctly', async () => {
+    const time = '2026-10-14T10:00:00Z'
+    api.loadRequests.mockResolvedValue([{ ...request, status: 'APPROVED', request_actions: [
+      { ...request.request_actions[0], id: 'final', action: 'APPROVED', created_at: time },
+      { ...request.request_actions[0], id: 'transfer', action: 'REASSIGNED', created_at: time },
+      { ...request.request_actions[0], id: 'submission', action: 'SUBMITTED', created_at: time },
+    ] }])
+    render(<Workspace userId="student-1" />)
+    await userEvent.setup().click(await screen.findByRole('button', { name: /Library access/ }))
+    const items = within(screen.getByRole('list', { name: 'Activity history' })).getAllByRole('listitem')
+    expect(items[0].textContent).toMatch(/^Submitted/)
+    expect(items[1].textContent).toMatch(/^Tutor reassigned/)
+    expect(items[2].textContent).toMatch(/^Approved/)
+  })
+
   it('submits a student request without accepting an approver from the browser', async () => {
     render(<Workspace userId="student-1" />)
     const user = userEvent.setup()

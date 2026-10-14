@@ -1,6 +1,6 @@
 # Admin setup and assignment management
 
-Date: 2026-10-14. Status: implemented and tested; hosted migration, first Admin provisioning, and rolled-back hosted RPC/RLS smoke verification completed. Frontend deployment, real browser login/acceptance, and hosted multi-session concurrency remain pending.
+Date: 2026-10-14. Status: implemented and deployed; hosted migration, first Admin provisioning, and rolled-back hosted RPC/RLS smoke verification completed. User confirmed real Admin password login/dashboard access in Chrome. A hosted two-session write-gate check passed; complete role-switching browser acceptance and broader concurrency/load scenarios remain pending.
 
 Approved scope: [DECISIONS.md](DECISIONS.md) D14. The same email/password login opens the Admin workspace for an active protected ADMIN profile. Admin can configure departments, four-year class batches, existing confirmed Student/Faculty test logins, student placement, account status, and faculty responsibilities. Admin cannot read private request contents or approve. HOD/Dean/Principal assignments are configuration only; request processing remains Tutor-only.
 
@@ -45,5 +45,7 @@ The existing submit/decide interfaces remain unchanged. Their baseline implement
 7. Run `npm run test`, `npm run lint`, and `npm run build`. Local tests cover RLS, guarded operations, legacy migration/bootstrap, UI provisioning/replacement/errors, and unchanged MVP behavior. Record hosted results separately.
 
 The reusable [hosted-admin-smoke.sql](../supabase/tests/hosted-admin-smoke.sql) runs owner-side with authenticated-role identities and assertive checks. It creates temporary synthetic Auth rows without passwords/tokens, provisions profiles via the guarded Admin operations, submits/decides/transfers requests, checks old/new Tutor and Student history access, verifies Admin privacy and direct-write denial, then rolls everything back. Its success was verified on approvia-dev after the migration; a follow-up count confirmed no synthetic Auth identities remained and original requests/configuration counts were preserved. This does not exercise password login or concurrent sessions.
+
+Additional hosted serialization check: one SQL session held the shared transaction advisory gate for 12 seconds while a second authenticated Student session called submit_request. The Student transaction waited 11.70 seconds, completed, and rolled back. This verifies actual cross-session blocking on the guarded write path, rather than only inspecting function bodies. It does not replace same-request decision/replacement concurrency replays or load testing. The user separately confirmed actual Admin password login in Chrome; no password was shared with the agent.
 
 Invitations/recovery, institutional email enforcement, annual promotion/transfers/graduation lifecycle, event workflows, multi-level approvals, documents, referrals, notifications, and reporting are not delivered by this increment.

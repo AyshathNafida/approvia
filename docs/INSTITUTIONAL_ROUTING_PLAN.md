@@ -1,7 +1,7 @@
 # Institutional setup and approval routing plan
 
 Date: 2026-10-14 (Asia/Calcutta).
-Status: **routing proposal with approved D12/D13 rules; Admin portion implemented locally under D14**. HOD/Dean/Principal processing and runtime referral remain proposed/deferred. [ADMIN_SETUP.md](ADMIN_SETUP.md) records the implemented subset and pending rollout.
+Status: **routing proposal with approved D12/D13 rules; Admin portion implemented/deployed under D14**. HOD/Dean/Principal processing and runtime referral remain proposed/deferred. [ADMIN_SETUP.md](ADMIN_SETUP.md) records the implemented subset and verification limits.
 
 The user requested a plan for assigning Tutors by class/year, assigning different responsibilities, and passing requests to higher authorities. This document proposes the next extension after the user-confirmed working test MVP. Canonical requirements remain [PROJECT_REQUIREMENTS.md](PROJECT_REQUIREMENTS.md); unresolved decisions remain in [DECISIONS.md](DECISIONS.md).
 
