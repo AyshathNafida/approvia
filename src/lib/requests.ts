@@ -5,7 +5,7 @@ export type RequestStatus = 'IN_REVIEW' | 'APPROVED' | 'REJECTED'
 export interface Profile { id: string; full_name: string; account_type: AccountType; active: boolean; class_id: string | null }
 export interface RequestType { id: string; name: string; approval_route: string[] }
 export interface ApprovalStep { id: string; approver_id: string; responsibility: string; position: number; status: string }
-export interface RequestAction { id: string; actor_name: string; responsibility: string | null; action: string; comment: string | null; created_at: string }
+export interface RequestAction { id: string; actor_name: string; responsibility: string | null; action: 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'REASSIGNED'; comment: string | null; created_at: string }
 export interface ApprovalRequest {
   id: string; title: string; description: string; status: RequestStatus; student_name: string;
   class_name: string; department_name: string; created_at: string; decided_at: string | null;

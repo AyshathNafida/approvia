@@ -1,0 +1,49 @@
+# Admin setup and assignment management
+
+Date: 2026-10-14. Status: implemented and tested; hosted migration, first Admin provisioning, and rolled-back hosted RPC/RLS smoke verification completed. Frontend deployment, real browser login/acceptance, and hosted multi-session concurrency remain pending.
+
+Approved scope: [DECISIONS.md](DECISIONS.md) D14. The same email/password login opens the Admin workspace for an active protected ADMIN profile. Admin can configure departments, four-year class batches, existing confirmed Student/Faculty test logins, student placement, account status, and faculty responsibilities. Admin cannot read private request contents or approve. HOD/Dean/Principal assignments are configuration only; request processing remains Tutor-only.
+
+## Owner-controlled rollout
+
+1. Confirm the target is **approvia-dev**, reference `cypcgwcmavauezmxdbgb`, rather than the other project named approvia. Keep the existing deployed frontend while preparing the backend.
+2. Run [admin-preflight.sql](../supabase/admin-preflight.sql) read-only. Compare function definitions, RLS, policies, and tables with the version-controlled small MVP baseline. Check whether migration history already exists. If the Admin migration is already applied or the schema differs, stop and reconcile before proceeding.
+3. Export the private application snapshot and pre-change schema results to protected local storage, outside Git. `artifacts/` is ignored if using workspace storage. The snapshot contains private request data; do not publish it. It is not a full Auth/platform backup. Preserve a full database backup through the institution's owner-controlled backup process before production use.
+4. The initial schema was manually applied. Continue the explicit owner SQL Editor path for this development increment; record the applied file and results. Do not run `db push` or insert invented migration-history records. Reconcile the manual baseline properly before later switching to CLI migrations.
+5. Apply [202610140001_admin_setup.sql](../supabase/migrations/202610140001_admin_setup.sql) **once**, after the existing initial migration. It is transactional. Never rerun the baseline or the new migration over an already updated schema.
+6. Create a separate email-confirmed Supabase Auth login for the first Admin and keep its password private. Run [bootstrap-admin.example.sql](../supabase/bootstrap-admin.example.sql) as owner with that email and name substituted privately. It rejects placeholders, unconfirmed/ambiguous identities, existing profiles, and any existing Admin. Do not commit personal values.
+7. Deploy the updated frontend only after the backend is ready. Existing public Supabase URL/key environment settings are unchanged; no service-role key belongs in the frontend. Vercel remains configured to deploy GitHub master. Consult PROJECT_STATUS.md for the actual commit/deployment state; applying the backend alone does not deploy the frontend.
+8. Sign in as Admin, fill the existing test class's batch details, and verify setup gaps. The user confirmed no existing students changed class. Migration backfill uses matching submission-time class/department names; unmatched pending records block Tutor changes globally until owner review. This conservative guard avoids transferring an unknown historical request to the wrong reviewer. Owner-reviewed corrections to `submitted_class_id` must use actual original-class evidence, preserve request/history data, and record an audit event; there is no browser mapping override.
+
+## Daily Admin operations
+
+- Departments: create/rename/activate/deactivate. Deactivation requires dependent active classes and HOD assignment to be resolved first.
+- Class batches: store department, division name, start year, end year exactly four years later, Tutor, and status. Same division names may exist for different batches. Once membership/history exists, department and established batch identity cannot change. Filling previously missing legacy batch years is allowed. Renaming never rewrites request snapshots.
+- Accounts: use the exact email of a confirmed existing test Auth login. Provision a Student with an active class or Faculty without student membership. Account type is immutable through this dashboard; ADMIN accounts cannot be created or edited. Names/status/membership are editable subject to dependencies.
+- Student moves/deactivation: pending requests must finish first. Completed requests retain their original names, class, reviewers, and decisions.
+- Faculty deactivation: first replace/remove every responsibility and resolve any remaining pending review. There are no destructive account/class/department delete controls.
+- Responsibilities: Tutor is class-scoped; HOD department-scoped; Dean/Principal institution-scoped. Active Faculty may hold multiple scopes/responsibilities. There is one current holder per scope. Removal requires a reason; a Tutor cannot be removed while that class has pending reviews.
+- Tutor replacement: supply a reason and an active replacement. One transaction updates the class, transfers its pending Tutor steps, records old/new reviewers, adds Student-visible reassignment history, and audits metadata. Completed reviews remain with the original Tutor. Admin receives an affected count rather than request details.
+- Configuration history: displays the latest 100 responsibility changes. Request comments and private bodies are not in this view. Audit metadata excludes change reasons and request contents; responsibility-change reasons remain configuration history.
+
+## Backend boundaries
+
+New public operations are `admin_save_department`, `admin_save_class`, `admin_provision_profile`, `admin_update_profile`, `admin_assign_responsibility`, and `admin_setup_summary`. Their definitions in the migration are the interface source. All recheck active ADMIN access and accept only validated configuration changes. Provisioning reads the matching confirmed Auth identity server-side; it exposes no passwords, tokens, unrestricted identity directory, or credentials.
+
+The existing submit/decide interfaces remain unchanged. Their baseline implementations move to the private schema with browser execution revoked; public wrappers acquire the same transaction advisory lock as Admin writes. This increment serializes guarded application writes to prevent replacement/deactivation races. It is intentionally a small-test workload design; production throughput/load testing and more granular locking remain future work. Owner SQL bypasses browser guards and must remain controlled.
+
+`classes.tutor_id` remains the current Tutor source. `authority_assignments` stores HOD/Dean/Principal holders. `responsibility_changes` is append-only to browsers and retains initial Tutor configuration plus later changes. `request_reassignments` retains prior/current request reviewers and follows request RLS; Admin cannot select it. New submissions store `requests.submitted_class_id`.
+
+## Acceptance and concurrency checks
+
+1. Admin configures a department/class and provisions an existing Student/Faculty login. Reject unknown/unconfirmed logins and type changes.
+2. Student submits; old Tutor sees it. Admin replaces the class Tutor. Verify the transfer count, old Tutor loss of access, new Tutor access/decision, and Student reassignment/decision history after refresh.
+3. Repeat with two pending and one completed request. Completed history/reviewer must stay intact. A repeated unchanged assignment returns zero and adds no new changes.
+4. Test pending-student move/deactivation denial, assigned-faculty deactivation denial, invalid scopes, missing reasons, invalid four-year batches, duplicate batch identities, and denied Student/Faculty/anonymous Admin calls.
+5. Confirm Admin cannot read requests, approval steps, request actions, or request reassignment rows even through direct API queries.
+6. On actual hosted PostgreSQL, use two separate owner-controlled sessions with disposable development requests and authenticated-role identities. Hold the shared write gate in session A while approving a request; start Admin replacement in session B and verify it waits. Commit A: the decision stays completed, while replacement transfers remaining pending requests. Reverse order: replacement commits first, and the old Tutor's waiting decision must fail. Repeat holding the gate during Student submission: replacement must include that newly committed pending request. Keep each hold short; rollback or complete outstanding transactions promptly. PGlite is a single-session test environment, so local serialization/interface tests do not prove actual concurrent hosted execution.
+7. Run `npm run test`, `npm run lint`, and `npm run build`. Local tests cover RLS, guarded operations, legacy migration/bootstrap, UI provisioning/replacement/errors, and unchanged MVP behavior. Record hosted results separately.
+
+The reusable [hosted-admin-smoke.sql](../supabase/tests/hosted-admin-smoke.sql) runs owner-side with authenticated-role identities and assertive checks. It creates temporary synthetic Auth rows without passwords/tokens, provisions profiles via the guarded Admin operations, submits/decides/transfers requests, checks old/new Tutor and Student history access, verifies Admin privacy and direct-write denial, then rolls everything back. Its success was verified on approvia-dev after the migration; a follow-up count confirmed no synthetic Auth identities remained and original requests/configuration counts were preserved. This does not exercise password login or concurrent sessions.
+
+Invitations/recovery, institutional email enforcement, annual promotion/transfers/graduation lifecycle, event workflows, multi-level approvals, documents, referrals, notifications, and reporting are not delivered by this increment.

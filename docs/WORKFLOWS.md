@@ -6,6 +6,8 @@ Status: required institutional behavior and illustrative flows, with D10's Gener
 
 The current MVP expands D9 with D10. Login loads the protected active profile: Student opens request submission/tracking; Faculty opens assigned Tutor reviews. Missing profiles receive setup guidance, inactive profiles are blocked, and Admin receives a placeholder without request contents or approval functions. Full Admin account-management and invitation screens remain planned.
 
+D14 replaces the Admin placeholder with a configuration workspace: departments, four-year class batches, existing confirmed-user profile setup, student placement/status, and faculty responsibilities. The hosted migration and owner-bootstrap are applied; frontend deployment/browser acceptance are in progress. Invitations and multi-level processing remain deferred. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
+
 ```text
 Single login → Authentication → Read account type
   STUDENT → Student dashboard
@@ -47,7 +49,7 @@ The following are illustrative rules from source section 14, not a finalized req
 | Department-Level Request | Tutor → HOD required |
 | Major Institutional Request | Tutor → HOD → Dean → Principal required |
 
-Whether an ordered route may omit intermediate levels or start above Tutor remains unresolved. Do not infer that arbitrary checkbox combinations are permitted.
+Approved on 2026-10-14 (D13): event/request types define their mandatory approvals; class events require Tutor/HOD and college events require Dean/Principal. Configured routes may reach higher authorities directly while preserving hierarchy order and mandatory authorities. Complete routes remain open, including whether college events also require Tutor/HOD. Arbitrary checkbox combinations and runtime faculty referral are not authorized by this decision.
 
 ## Sequential processing example
 
@@ -94,3 +96,5 @@ Students can track status and view approval history and approver comments. Track
 Notifications belong to the initial scope, but their channels and delivery rules are unspecified. Significant actions must be audited as described in [SECURITY.md](SECURITY.md).
 
 Changing an assignment directs future requests to the newly assigned faculty without code changes. In the approved test MVP (D10), pending requests keep the Tutor resolved at submission. Missing/inactive class/department/Tutor configuration blocks submission; inactive users cannot act. Existing requests assigned to an inactive Tutor wait for later reassignment support. Other institutional assignment scenarios remain open.
+
+D14 adds an explicit Admin Tutor replacement operation that supersedes D10 pending retention for this operation. It transfers pending class reviews, records a REASSIGNED history action and old/new reviewer details, and changes current faculty access atomically. Completed reviews retain the original Tutor. A decision completed before replacement stays final; a transferred request cannot subsequently be decided by the old Tutor. Missing/invalid replacement or unresolved legacy pending-class mapping aborts the whole operation. Student class moves/deactivation and faculty deactivation are blocked until relevant pending work/assignments are resolved. HOD/Dean/Principal are configurable but do not yet process requests.

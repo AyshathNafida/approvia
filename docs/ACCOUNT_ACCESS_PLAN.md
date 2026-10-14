@@ -2,7 +2,7 @@
 
 Date: 2026-10-12. Status: **core policies approved; small MVP Student/Tutor access implemented**. The user selected Admin invitations/email-password login, faculty-only approval authority, and restricted read permissions. [DECISIONS.md](DECISIONS.md) D6–D8 record approval and rationale. D10 expands authentication-only D9 with manually prepared protected profiles, Student/Tutor workspaces, RLS, and guarded request functions. Automated provisioning, recovery UI, institutional-domain enforcement, and Admin screens remain deferred. Additional technical proposals and remaining questions below are labeled separately. Requirements sections 5–10 and 23–24 supply the original context.
 
-Current implementation update (D10/D11): the user expanded the test MVP to Student/Tutor request workspaces. Protected manually prepared profiles, active-account checks, RLS, and guarded request RPCs are implemented. Development test emails were supplied by the user; production institutional-domain/invitation requirements are retained. Automated provisioning, first-Admin setup, recovery UI, and Admin screens remain pending. The earlier D9 authentication-only limit is superseded for this increment by D10.
+Current implementation update (D14, 2026-10-14): Admin configuration screens and guarded backend operations are implemented/tested. The hosted migration and approved dedicated confirmed first Admin bootstrap are applied; frontend deployment/browser acceptance are in progress. Owner bootstrap accepts one dedicated existing confirmed Auth login for the first Admin. The dashboard provisions only existing confirmed Student/Faculty test logins, cannot overwrite account type, and excludes Admin edits/additional-Admin creation. Student placement/status and faculty deactivation are dependency-guarded. No unrestricted Auth directory or credentials are exposed. Development setup does not replace production institutional-domain/invitation requirements. Automated invitations, recovery UI, and institutional identity enforcement remain pending. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
 
 ## Approved account provisioning (D6/Q12)
 
@@ -11,7 +11,7 @@ Current implementation update (D10/D11): the user expanded the test MVP to Stude
 
 ## Additional implementation proposals and open setup details
 
-The first-Admin provisioning process is still proposed. Protected roles, class membership, and inactive-account denial are implemented for the approved test MVP; a deactivation administration screen is not included.
+D14 approves the controlled first-Admin owner bootstrap and dependency-guarded deactivation screens. Backend controls and the first Admin profile are applied to approvia-dev; frontend deployment is in progress. Additional Admin provisioning remains outside this increment.
 
 - The deployment owner establishes the first Admin through a controlled server-side setup. Users cannot grant themselves Admin access. Additional Admin provisioning needs an explicit authorized process.
 - The account record stores the assigned account type and active/inactive status. User-editable authentication metadata must not grant roles or approval responsibilities.

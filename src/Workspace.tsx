@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { decideRequest, loadProfile, loadRequests, loadRequestTypes, submitRequest, type ApprovalRequest, type Profile, type RequestType, type RequestStatus } from './lib/requests'
 import './Workspace.css'
+import AdminWorkspace from './AdminWorkspace'
 
 const labels: Record<RequestStatus, string> = { IN_REVIEW: 'In review', APPROVED: 'Approved', REJECTED: 'Rejected' }
 const formatDate = (date: string) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(date))
@@ -95,7 +96,7 @@ export default function Workspace({ userId }: { userId: string }) {
   if (error) return <section className="workspace-state"><p className="error" role="alert">{error}</p><button className="secondary-button" onClick={() => void refresh(true)}>Try again</button></section>
   if (!profile) return <section className="workspace-state"><h1>Your account is almost ready.</h1><p>Your administrator needs to assign your student or faculty profile before you can use requests.</p><button className="secondary-button" onClick={() => void refresh(true)}>Check again</button></section>
   if (!profile.active) return <section className="workspace-state"><h1>Account inactive</h1><p>Contact your administrator to restore access.</p></section>
-  if (profile.account_type === 'ADMIN') return <section className="workspace-state"><h1>Administration</h1><p>The test MVP supports student submission and Tutor review. Administration screens will be added later.</p></section>
+  if (profile.account_type === 'ADMIN') return <AdminWorkspace profile={profile} />
 
   const student = profile.account_type === 'STUDENT'
   const visibleRequests = requests.filter((request) => filter === 'ALL' || request.status === filter)
@@ -128,7 +129,7 @@ export default function Workspace({ userId }: { userId: string }) {
             <h3>Description</h3><p className="request-description">{selected.description}</p>
             <div className="approval-progress"><span>Tutor review</span><strong>{selected.status === 'IN_REVIEW' ? 'Awaiting decision' : labels[selected.status]}</strong></div>
             {canDecide && <div className="decision-form"><label htmlFor="decision-comment">Decision comment</label><textarea id="decision-comment" maxLength={2000} rows={3} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Explain your approval or rejection." disabled={busy} required /><div className="decision-buttons"><button className="primary-button" onClick={() => void decide('APPROVED')} disabled={busy}>Approve</button><button className="reject-button" onClick={() => void decide('REJECTED')} disabled={busy}>Reject</button></div>{busy && <p role="status">Saving your decision…</p>}{actionError && <p className="error" role="alert">{actionError}</p>}</div>}
-            <h3>Activity history</h3><ol className="history-list">{[...selected.request_actions].sort((a, b) => a.created_at.localeCompare(b.created_at) || (a.action === 'SUBMITTED' ? -1 : 1)).map((action) => <li key={action.id}><strong>{action.action === 'SUBMITTED' ? 'Submitted' : action.action === 'APPROVED' ? 'Approved' : 'Rejected'}</strong><span>{action.actor_name}{action.responsibility ? ` · ${action.responsibility}` : ''} · {formatDate(action.created_at)}</span>{action.comment && <p>{action.comment}</p>}</li>)}</ol>
+            <h3>Activity history</h3><ol className="history-list">{[...selected.request_actions].sort((a, b) => a.created_at.localeCompare(b.created_at) || (a.action === 'SUBMITTED' ? -1 : 1)).map((action) => <li key={action.id}><strong>{action.action === 'SUBMITTED' ? 'Submitted' : action.action === 'APPROVED' ? 'Approved' : action.action === 'REASSIGNED' ? 'Tutor reassigned' : 'Rejected'}</strong><span>{action.actor_name}{action.responsibility ? ` · ${action.responsibility}` : ''} · {formatDate(action.created_at)}</span>{action.comment && <p>{action.comment}</p>}</li>)}</ol>
           </>}
         </section>
       </div>

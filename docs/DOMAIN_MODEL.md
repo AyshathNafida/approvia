@@ -22,6 +22,10 @@ Departments must be configurable: administrators can add, edit, activate, and de
 
 Classes/divisions are distinct from departments. A department may have one or more classes; each student belongs to one active class/division, and each class has one assigned tutor. CS-A, CS-B, and CS-C are illustrative divisions, not a mandatory division list for every department.
 
+Approved on 2026-10-14 (D12): a class identifies a specific batch/cohort whose Tutor continues through the four-year course. Annual progression does not replace the Tutor. Cohort/year records and membership history remain proposed schema extensions; the MVP currently stores one class and Tutor reference without those lifecycle records.
+
+D14 implementation update: the applied Admin migration adds four-year batch fields to existing class records, submission-time request class IDs, scoped HOD/Dean/Principal assignments, responsibility-change history, and request-reassignment history. `classes.tutor_id` remains the current Tutor source. Annual progression/membership lifecycle records remain deferred. The hosted backend has the eight core MVP tables plus three Admin/reassignment tables; frontend deployment is in progress. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
+
 | Responsibility | Assignment scope | Person resolved from |
 |---|---|---|
 | `TUTOR` | Class/division | Student's class tutor assignment |
@@ -30,6 +34,8 @@ Classes/divisions are distinct from departments. A department may have one or mo
 | `PRINCIPAL` | Institution | Currently assigned active Principal |
 
 Administrators maintain assignments. D10 settles the test MVP: submission snapshots the class Tutor; changing that assignment affects future requests while pending requests keep their original Tutor. A request assigned to an inactive Tutor waits for later reassignment support. Broader institutional reassignment rules remain open.
+
+D14 supersedes that pending-retention rule for explicit Admin Tutor replacement: transfer the class's pending Tutor reviews atomically with mandatory reason and preserved old/new history. Completed request reviewers/decisions stay unchanged. Faculty deactivation is blocked while assignments or pending reviews exist. Other future multi-level reassignment rules remain open.
 
 ## Users, profiles, and access concepts
 

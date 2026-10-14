@@ -6,6 +6,7 @@ import Workspace from './Workspace'
 
 const api = vi.hoisted(() => ({ loadProfile: vi.fn(), loadRequests: vi.fn(), loadRequestTypes: vi.fn(), submitRequest: vi.fn(), decideRequest: vi.fn() }))
 vi.mock('./lib/requests', () => api)
+vi.mock('./AdminWorkspace', () => ({ default: () => <section><h1>Administration</h1></section> }))
 
 const request = {
   id: 'request-1', title: 'Library access', description: 'I need library access this weekend.', status: 'IN_REVIEW',

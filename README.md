@@ -6,7 +6,7 @@ The goal is real deployment in a college, with security, data integrity, maintai
 
 ## Current state
 
-Approvia's small test MVP supports Supabase email/password login, student General Request submission, class-resolved Tutor approve/reject with comment, and student status/history tracking. PostgreSQL profiles, RLS policies, and guarded transactional functions control access. Documents, notifications, returns, cancellation, additional approval levels, and Admin screens remain future work. See [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for verified progress and limits.
+Approvia's deployed test MVP supports Supabase email/password login, student General Request submission, class-resolved Tutor approve/reject with comment, and student status/history tracking. An Admin setup/assignment increment is implemented and tested: departments, four-year class batches, existing confirmed-user profiles, placement/status controls, scoped faculty assignments, and audited pending Tutor reassignment. Its hosted migration and first Admin bootstrap are applied and hosted RPC/RLS verification passed; frontend deployment/browser acceptance are in progress. PostgreSQL profiles, RLS policies, and guarded transactional functions control access. Documents, notifications, returns, cancellation, and additional approval levels remain future work. See [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for verified progress and limits.
 
 ## Start here
 
@@ -24,6 +24,8 @@ For a new coding chat, use this repository as the workspace and have the agent r
 | [ACCOUNT_ACCESS_PLAN.md](docs/ACCOUNT_ACCESS_PLAN.md) | Approved provisioning, login, and visibility rules plus remaining setup proposals |
 | [MVP_SCOPE.md](docs/MVP_SCOPE.md) | Approved smaller end-to-end approval MVP and testing scope |
 | [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) | Verified progress, outstanding work, and latest handoff |
+| [ADMIN_SETUP.md](docs/ADMIN_SETUP.md) | Admin increment, guarded assignments/reassignment, owner rollout, and acceptance checks |
+| [INSTITUTIONAL_ROUTING_PLAN.md](docs/INSTITUTIONAL_ROUTING_PLAN.md) | Cohort/authority routing proposal and approved D12/D13 rules |
 
 ## Core model
 
@@ -64,6 +66,8 @@ The current development database is approvia-dev (`cypcgwcmavauezmxdbgb`). Its i
 Use the Student account to submit a request; sign out, use the Tutor account to approve/reject with a comment, then sign back in as Student to view the decision/history. Refresh to verify persistence. Unprovisioned users receive setup guidance; inactive users are blocked; Admin accounts receive no request contents or approval UI. Credentials stay private. Public signup UI, invitation/account management, and recovery UI are not included. A safe owner-side hosted database check is provided in [hosted-smoke.sql](supabase/tests/hosted-smoke.sql); it uses authenticated-role identities and rolls back synthetic request data.
 
 ## Source and decision status
+
+For the new Admin increment, follow [ADMIN_SETUP.md](docs/ADMIN_SETUP.md). Preserve a private pre-change snapshot, inspect the manual baseline, apply the new migration once as owner, bootstrap the first dedicated confirmed Admin login, and only then deploy the updated frontend. Never rerun the initial migration over the existing development database. Test-only existing login provisioning does not replace future institutional invitations/email-domain enforcement. HOD/Dean/Principal assignments do not yet enable multi-level approvals.
 
 [PROJECT_REQUIREMENTS.md](docs/PROJECT_REQUIREMENTS.md) preserves the full contents of `C:/Users/mahmo/Desktop/approvia/doc/doc.txt`, captured on 2026-10-09. The original file was left unchanged. The repository copy makes future chats independent of that desktop path.
 

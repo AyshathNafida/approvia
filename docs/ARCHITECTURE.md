@@ -48,8 +48,16 @@ The frontend uses src/lib/requests.ts for permitted queries and RPC calls. publi
 
 The eight tables are profiles, departments, classes, request_types, requests, approval_steps, request_actions, and audit_logs. Backend identities are configured data, not hard-coded faculty IDs. Only the approved Tutor route is supported by this migration; additional routes require later migrations and workflow decisions. The baseline was applied manually through SQL Editor; reconcile migration history before introducing CLI deployment automation.
 
-## Remaining design
+## Implemented Admin increment (D14)
 
-Schema/RLS extensions for deferred entities, storage access policies, additional server interfaces, multi-level concurrency behavior, Admin UI, and broader testing remain to be designed. npm commands and Vercel build settings are documented in [README.md](../README.md). Production operational configuration remains pending.
+The new migration extends the existing schema rather than replacing the baseline. Three tables add scoped authority assignments, append-only responsibility changes, and request reassignment history. Classes gain four-year batch fields; requests gain submission-time class IDs. Admin-only transactional RPCs handle configuration, exact-email confirmed-user provisioning, guarded membership/status edits, and Tutor replacement. Supabase Auth credentials remain server-owned; no service-role key is used by the frontend.
+
+The existing public submit/decision signatures remain stable. Baseline implementations move to the private schema with authenticated execution revoked; public wrappers and Admin operations share a transaction advisory write gate. This serializes test-increment writes and prevents races between assignment/status edits, submission, and decisions. Production lock granularity and throughput remain future verification/design work. Tutor replacement changes only pending current steps and records reassignment history; RLS automatically removes old pending-review access and grants the replacement access. Admin still cannot read request contents or request-specific history.
+
+An Admin workspace and typed configuration client supplement the existing Student/Faculty workspaces. Higher authority assignments are not processing capability. Owner bootstrap and hosted migration/RPC/RLS smoke verification are complete. Frontend deployment and hosted concurrency/browser acceptance remain pending; [ADMIN_SETUP.md](ADMIN_SETUP.md) is the rollout guide.
+
+## Remaining design after D14
+
+Schema/RLS extensions for deferred entities, storage access policies, invitations/account lifecycle, multi-level concurrency behavior, reporting, and production verification remain to be designed. npm commands and Vercel build settings are documented in [README.md](../README.md). Production operational configuration remains pending.
 
 Before designing behavior affected by open product rules, consult [DECISIONS.md](DECISIONS.md). Track actual implementation progress in [PROJECT_STATUS.md](PROJECT_STATUS.md).

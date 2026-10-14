@@ -14,7 +14,9 @@ Enforce access controls in the frontend and backend. Manually navigating to a re
 | Faculty | May process only requests assigned to them according to their responsibilities |
 | Admin | Administrative functions restricted to authorized Admin accounts; no automatic approval authority |
 
-A student must not access another student's private request. Approved on 2026-10-12 (D8): faculty can read requests/documents for current or completed assigned approval steps, with no future-step access before their turn. Admin can read configuration, summary reports, and audit metadata, but not request contents or supporting documents. Audit/report fields must respect those content boundaries; exact fields and retention remain open. These are required policies, not implemented RLS.
+A student must not access another student's private request. Approved on 2026-10-12 (D8): faculty can read requests/documents for current or completed assigned approval steps, with no future-step access before their turn. Admin can read configuration, summary reports, and audit metadata, but not request contents or supporting documents. Audit/report fields must respect those content boundaries; exact fields and retention remain open. Request RLS implements the current Tutor-only boundary; document and broader workflow/report policies remain future work.
+
+D14 adds active-Admin-only RPCs applied to approvia-dev. Browser users cannot write configuration directly, create additional Admins, switch account types, or edit Admin profiles. Exact-email provisioning resolves one confirmed Auth identity server-side without exposing credentials or an unrestricted identity directory. Assignment history is Admin configuration; request reassignment history uses request RLS and remains hidden from Admin. All guarded writes share a transaction gate. The approved dedicated first Admin bootstrap is applied, and rolled-back hosted RPC/RLS checks passed. Frontend browser verification remains pending. See [ADMIN_SETUP.md](ADMIN_SETUP.md).
 
 Approval responsibility is separate from account type. The user resolved the section 6.3/7 conflict on 2026-10-12 (D7): only FACULTY accounts can hold approval responsibilities; ADMIN accounts cannot approve.
 
@@ -29,6 +31,8 @@ Approved provisioning/login policy (D6): Admin invites students/faculty after in
 - Record each approval action's request, approver, responsibility, action, comment, date, and time.
 
 MVP request submission and Tutor decisions use database transactions. Decisions lock the request/step, require a pending assigned step and comment, and reject repeat final decisions. Approval actions cannot be edited/deleted by browser users. The submission-time Tutor is retained for pending requests under D10. Broader workflow versioning, document history, and concurrent multi-level operations remain future design work.
+
+D14 explicitly changes pending Tutor steps only through audited Admin replacement, preserving previous reviewer/reason metadata and adding immutable action history. Completed steps stay unchanged; the old Tutor cannot decide after transfer. Partial failures roll back assignment/step/history changes together. Student moves/deactivation and faculty deactivation have server-side dependency guards. Owner SQL remains privileged and must be controlled; actual hosted concurrency testing is pending despite local lock-entrypoint/ordering tests.
 
 ## Supporting documents
 
