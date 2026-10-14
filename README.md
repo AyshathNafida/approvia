@@ -6,7 +6,7 @@ The goal is real deployment in a college, with security, data integrity, maintai
 
 ## Current state
 
-Approvia's deployed test MVP supports Supabase email/password login, student General Request submission, class-resolved Tutor approve/reject with comment, and student status/history tracking. Its Admin increment adds departments, four-year class batches, existing confirmed-user profiles, guarded placement/status controls, scoped faculty assignments, and audited pending Tutor reassignment. The hosted migration and first Admin bootstrap are applied, the frontend is live, and the user confirmed Admin login/dashboard access in Chrome. Local tests, hosted RPC/RLS smoke, and a two-session write-gate check passed. Full browser role-switching/reassignment acceptance and broader concurrency/load checks remain future verification. PostgreSQL profiles, RLS policies, and guarded transactional functions control access. Documents, notifications, returns, cancellation, and additional approval levels remain future work. See [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for verified progress and limits.
+Approvia's deployed development MVP supports email/password login, protected Student/Faculty/Admin workspaces, institutional setup, and six request types with structured forms and sequential approvals. Routes depend on request type and event/facility scope; the system resolves distinct active Faculty automatically. Scoped replacements transfer unfinished reviews and current holders can read completed history for their responsibility. Admin remains excluded from private request contents. All three migrations and the compatible frontend are applied/deployed, and the catalogue is active. Local tests/build/lint and hosted RPC/RLS smoke passed; see [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for detailed verification and remaining limits. Attachments, notifications, referral, edits and cancellation remain future work.
 
 ## Start here
 
@@ -68,7 +68,7 @@ Use the Student account to submit a request; sign out, use the Tutor account to 
 
 ## Source and decision status
 
-For the new Admin increment, follow [ADMIN_SETUP.md](docs/ADMIN_SETUP.md). Preserve a private pre-change snapshot, inspect the manual baseline, apply the new migration once as owner, bootstrap the first dedicated confirmed Admin login, and only then deploy the updated frontend. Never rerun the initial migration over the existing development database. Test-only existing login provisioning does not replace future institutional invitations/email-domain enforcement. HOD/Dean/Principal assignments do not yet enable multi-level approvals.
+For the new Admin increment, follow [ADMIN_SETUP.md](docs/ADMIN_SETUP.md). Preserve a private pre-change snapshot, inspect the manual baseline, apply the new migration once as owner, bootstrap the first dedicated confirmed Admin login, and only then deploy the updated frontend. Never rerun the initial migration over the existing development database. Test-only existing login provisioning does not replace future institutional invitations/email-domain enforcement. D14 introduced those assignments; D15 now processes them sequentially for its approved request catalogue.
 
 [PROJECT_REQUIREMENTS.md](docs/PROJECT_REQUIREMENTS.md) preserves the full contents of `C:/Users/mahmo/Desktop/approvia/doc/doc.txt`, captured on 2026-10-09. The original file was left unchanged. The repository copy makes future chats independent of that desktop path.
 
@@ -76,4 +76,4 @@ Topic documents summarize the source and label examples and planned architecture
 
 ## Typed-request extension (D15)
 
-The approved catalogue and routes are documented in [REQUEST_WORKFLOWS.md](docs/REQUEST_WORKFLOWS.md). The local implementation adds structured forms, sequential reviews, all-responsibility pending transfer and scoped completed-history access. Read PROJECT_STATUS.md for actual hosted migration, frontend deployment, catalogue activation and verification status. New types start inactive during rollout. Never rerun any applied migration; continue the owner-controlled development deployment process.
+The approved catalogue and routes are documented in [REQUEST_WORKFLOWS.md](docs/REQUEST_WORKFLOWS.md). The deployed implementation adds structured forms, sequential reviews, all-responsibility pending transfer and scoped completed-history access. Read PROJECT_STATUS.md for actual hosted migration, frontend deployment, catalogue activation and verification status. New types start inactive during rollout. Never rerun any applied migration; continue the owner-controlled development deployment process.

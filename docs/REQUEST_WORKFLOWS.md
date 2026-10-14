@@ -1,6 +1,6 @@
 # Typed requests and sequential approval
 
-Approved 2026-10-14 under D15. Implementation is local; consult PROJECT_STATUS.md for hosted rollout and verification. This supersedes the Tutor-only processing limit and adds scoped final-request archive access to the earlier D8 visibility rule.
+Approved 2026-10-14 under D15. Implemented and deployed with the catalogue active; consult PROJECT_STATUS.md for actual verification and limits. This supersedes the Tutor-only processing limit and adds scoped final-request archive access to the earlier D8 visibility rule.
 
 ## Catalogue and forms
 
@@ -31,7 +31,7 @@ Admin replacement of Tutor/HOD/Dean/Principal transfers all unfinished steps for
 
 Students see their own requests. Faculty see current/completed assigned steps; future steps do not confer early access. The current holder additionally sees final requests with an actual APPROVED/REJECTED step under that responsibility in the saved class/department/institution scope. This archive permission applies to replacement and initial holders alike. Former reviewers retain their own processed-step access; unprocessed transferred access is revoked unless another authorized relationship applies. Never-reached or skipped responsibilities do not establish archive visibility. Admin remains excluded from bodies, fields, comments, steps and reassignment rows.
 
-Legacy department scope is filled only if saved class/department names match the saved class identity. Unmatched records remain unresolved and grant no scoped archive access. Affected unresolved pending records block replacement for owner-reviewed mapping. Shared transactional write-gate locking is retained for this development workload.
+Legacy department scope is filled automatically only if saved class/department names match the saved class identity. Unmatched records remain unresolved and grant no scoped archive access. Affected unresolved pending records block replacement for owner-reviewed mapping. For final records, the owner may use [map-legacy-department.example.sql](../supabase/map-legacy-department.example.sql) after reviewing original evidence; it rejects placeholders, changed scopes and repeat mapping, updates only department metadata, and audits the correction. Shared transactional write-gate locking is retained for this development workload.
 
 ## Rollout and verification
 
@@ -39,7 +39,15 @@ Legacy department scope is filled only if saved class/department names match the
 2. Apply [202610140002_request_workflows.sql](../supabase/migrations/202610140002_request_workflows.sql) once after the existing two migrations. Never rerun applied migrations. The five new types start inactive so the existing deployed form remains usable.
 3. Deploy the compatible frontend from GitHub master; then run [activate-request-catalogue.sql](../supabase/activate-request-catalogue.sql) as owner. Activation does not provision reviewers. Admin must configure distinct active faculty for all required roles; missing assignments produce an actionable submission error.
 4. Run [hosted-workflow-smoke.sql](../supabase/tests/hosted-workflow-smoke.sql) only in approvia-dev. It uses disposable synthetic Auth rows without passwords/tokens and actual authenticated-role RLS. The full flow and fixtures roll back. It tests multi-step approval, future access, HOD replacement, historical access, old-reviewer denial, Student history, rejection and Admin privacy. This is not a password-login test.
-5. Run the owner-controlled two-session concurrency checks documented alongside the fixture scripts, clean only those fixtures, and record actual outcomes. Local PGlite tests cannot prove multi-session behavior.
+5. Run [workflow-concurrency-setup.sql](../supabase/tests/workflow-concurrency-setup.sql), then each indicated block from [workflow-concurrency-sessions.sql](../supabase/tests/workflow-concurrency-sessions.sql) in separate sessions. Confirm session A holds its advisory gate before starting B; the hosted lock probe uses pg_locks joined to pg_stat_activity. Finish outstanding sessions, run [workflow-concurrency-cleanup.sql](../supabase/tests/workflow-concurrency-cleanup.sql), and record actual outcomes. Local PGlite tests cannot prove multi-session behavior.
 6. Run tests, lint and production build. Inspect desktop/mobile real-component previews separately from hosted identity/RLS checks. Record any remaining browser password-login/role-switching acceptance limits explicitly.
 
 Attachments, referrals, drafts, editing/resubmission, cancellation, group requests, custom routes/forms, and external notifications remain future increments.
+
+
+## Verified development results: 2026-10-14
+
+All three migrations are applied, commit eb8656f is deployed, and all six types are active. The exact owner hosted smoke passed and rolled back its data. Real two-session checks passed with observed granted locks: decision-first preserved the completed reviewer (13.12-second wait), replacement-first denied the stale reviewer (17.09), and submission-first included the newly submitted future step (15.14). Fixture cleanup was verified afterward. These are PostgreSQL authenticated-role checks; the new full password-login browser role-switching flow has not been independently repeated. Local verification: 77 tests, build and lint passed; responsive preview used sample data. Institutional Faculty assignments are configured separately by Admin. See PROJECT_STATUS.md for capture/baseline and rollout details.
+
+
+Two legacy final-request department scopes were subsequently owner-reviewed against the original private capture and mapped with the tested guarded template, because class-name corrections prevented automatic matching. Saved details, decisions, reviewer IDs and class scope stayed unchanged; two audit entries record the review. Final counts retained all four profiles, two classes and two requests, with six active types, no synthetic Auth fixtures and no unresolved department scopes. The real Admin privacy check returned zero visible requests; the real current Tutor check returned both predecessor-reviewed final requests.

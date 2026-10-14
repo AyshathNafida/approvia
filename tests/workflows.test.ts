@@ -68,7 +68,7 @@ describe('typed requests and sequential approval',()=>{
     await db.exec(readFileSync(new URL('../supabase/tests/workflow-concurrency-setup.sql',import.meta.url),'utf8'))
     const scripts=readFileSync(new URL('../supabase/tests/workflow-concurrency-sessions.sql',import.meta.url),'utf8').split(/-- SESSION \d[AB]:[^\n]*\n/).slice(1)
     expect(scripts).toHaveLength(6)
-    for(const script of scripts) await db.exec(script.replace('select pg_sleep(12);','select pg_sleep(0);'))
+    for(const script of scripts) await db.exec(script.replace('select pg_sleep(30);','select pg_sleep(0);'))
     await db.exec(readFileSync(new URL('../supabase/tests/workflow-concurrency-cleanup.sql',import.meta.url),'utf8'))
     expect((await db.query('select * from requests')).rows).toHaveLength(0)
   })
@@ -137,6 +137,23 @@ describe('typed requests and sequential approval',()=>{
 })
 
 describe('scoped replacement and archive access',()=>{
+  it('maps owner-reviewed legacy final scope, preserves decisions, and rejects placeholder/repeat mapping',async()=>{
+    const request=await submit('general',{}); await decide(request,users.tutor); await replace('TUTOR')
+    await db.exec('reset role'); await db.query('update requests set submitted_department_id=null where id=$1',[request])
+    expect(await visible(request,users.replacement)).toBe(0)
+    await db.exec('reset role')
+    const template=readFileSync(new URL('../supabase/map-legacy-department.example.sql',import.meta.url),'utf8')
+    // Strip transaction boundaries so failure assertions can use savepoints.
+    const operation=template.replace(/^begin;$/m,'').replace(/^commit;$/m,'')
+    await db.exec('savepoint mapping_denial'); await expect(db.exec(operation)).rejects.toThrow(/Replace placeholders/); await db.exec('rollback to mapping_denial;release mapping_denial')
+    const reviewed=operation.replaceAll('REPLACE_REQUEST_ID',request).replaceAll('REPLACE_ORIGINAL_CLASS_ID',batch).replaceAll('REPLACE_ORIGINAL_DEPARTMENT_ID',department)
+    await db.exec(reviewed)
+    await db.exec('savepoint mapping_denial'); await expect(db.exec(reviewed)).rejects.toThrow(/no longer matches/); await db.exec('rollback to mapping_denial;release mapping_denial')
+    expect(await visible(request,users.replacement)).toBe(1)
+    await as(users.student)
+    expect((await db.query<{status:string;description:string}>('select status,description from requests where id=$1',[request])).rows[0]).toEqual({status:'APPROVED',description:'Reason'})
+    expect((await db.query<{approver_id:string}>('select approver_id from approval_steps where request_id=$1',[request])).rows[0].approver_id).toBe(users.tutor)
+  })
   for(const role of ['TUTOR','HOD','DEAN','PRINCIPAL']) it(`transfers ${role} unfinished reviews and preserves completed decisions`,async()=>{
     const complete=await submit('internship',catalogue[7][1]); for(const user of [users.tutor,users.hod,users.dean,users.principal]) await decide(complete,user)
     const pending=await submit('internship',catalogue[7][1]); expect(await replace(role)).toBe(1)
