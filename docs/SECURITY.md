@@ -1,5 +1,7 @@
 # Approvia security and audit requirements
 
+D16 local controls (2026-10-24; source sections 5–8, 20, 23–24): exact verified `lbscek.ac.in` email, server-controlled invitation/onboarding state, service-only finalization after password setup, and owner-approved email changes. Existing identities retain transitional eligibility until a separately guarded cutover; stale noncollege sessions lose application access after cutover. Admin creation stays owner-controlled, request privacy stays D15, and pending invitations grant no application profile/data access. Email features default off pending SMTP. See [ACCOUNT_INVITATIONS.md](ACCOUNT_INVITATIONS.md); these controls are locally implemented, not hosted verification.
+
 Status: required institutional controls, with small test MVP authentication, active profile checks, RLS, guarded submission/decision functions, preserved action history, and metadata audit events implemented under D10. Storage, invitation/account administration, full institutional identity validation, and broader workflows remain future work. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 1, 6–8, 13–14, 18–20, and 23–25.
 
 ## Authentication and authorization

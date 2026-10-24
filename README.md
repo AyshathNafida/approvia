@@ -10,6 +10,8 @@ Approvia's deployed development MVP supports email/password login, protected Stu
 
 ## Start here
 
+The D16 account update is implemented locally but **not deployed**: Admin invitations for `@lbscek.ac.in`, verified password onboarding, recovery, and identity-preserving college-email migration. Email delivery and college-only cutover both default off. Existing development accounts retain access until the separate owner cutover. See [ACCOUNT_INVITATIONS.md](docs/ACCOUNT_INVITATIONS.md) for SMTP, migration mappings, rollout and acceptance prerequisites. The deployed development baseline remains D15 until rollout is verified.
+
 For a new coding chat, use this repository as the workspace and have the agent read [AGENTS.md](AGENTS.md). It directs agents to this introduction, current status, decisions, and the documents relevant to their task. The same documents can be read directly in any chat that has access to these files.
 
 | Document | Contents |
@@ -22,6 +24,7 @@ For a new coding chat, use this repository as the workspace and have the agent r
 | [SECURITY.md](docs/SECURITY.md) | Authorization, request privacy, document handling, and audits |
 | [DECISIONS.md](docs/DECISIONS.md) | Established requirements, documentation choices, and open questions |
 | [ACCOUNT_ACCESS_PLAN.md](docs/ACCOUNT_ACCESS_PLAN.md) | Approved provisioning, login, and visibility rules plus remaining setup proposals |
+| [ACCOUNT_INVITATIONS.md](docs/ACCOUNT_INVITATIONS.md) | D16 implementation, college-email migration, SMTP and guarded rollout |
 | [MVP_SCOPE.md](docs/MVP_SCOPE.md) | Approved smaller end-to-end approval MVP and testing scope |
 | [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) | Verified progress, outstanding work, and latest handoff |
 | [ADMIN_SETUP.md](docs/ADMIN_SETUP.md) | Admin increment, guarded assignments/reassignment, owner rollout, and acceptance checks |

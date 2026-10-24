@@ -11,6 +11,9 @@ h1 { margin: 24px 0; font-size: clamp(44px, 5.5vw, 78px); line-height: 1.06; let
 .note { max-width: 480px; font-size: 13px; line-height: 1.7; color: #52675a; }
 footer { padding-top: 24px; border-top: 1px solid #dce3d8; color: #52675a; font-size: 12px; line-height: 1.6; }
 .auth-card { padding: clamp(24px, 3vw, 40px); background: #fff; border: 1px solid #dce3d8; border-radius: 24px; box-shadow: 0 20px 60px #173b3208; }
+.account-flow { flex: 1; display: grid; place-items: center; padding: 40px 0; }
+.account-form { width: 100%; max-width: 560px; align-self: center; margin: 24px 0; }
+.auth-card > .secondary-button { margin-top: 16px; }
 .auth-card h2 { font-size: 27px; letter-spacing: -1px; margin: 12px 0; }
 .auth-copy { color: #52675a; font-size: 14px; line-height: 1.7; }
 form { margin-top: 28px; }

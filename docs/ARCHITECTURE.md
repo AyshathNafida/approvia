@@ -1,5 +1,7 @@
 # Approvia intended architecture
 
+D16 local architecture update (2026-10-24): two Supabase Edge Functions mediate Admin invitations, verified password onboarding, recovery and college-email migration. Protected invitation records and owner-only settings/mappings supplement the existing schema; centralized eligibility uses current Auth email/verification and protected profile state across RLS/RPCs. No privileged key enters the browser. This update is **not hosted/deployed**; see [ACCOUNT_INVITATIONS.md](ACCOUNT_INVITATIONS.md) for interfaces, defaults and rollout. Earlier implementation sections below preserve prior increment boundaries.
+
 Status: architecture from [requirements](PROJECT_REQUIREMENTS.md) sections 1, 23–26, with approved small test MVP D10. React/TypeScript/Vite, Supabase Auth, protected account profiles, General Request submission, Tutor decisions, and status/history UI are implemented. Eight PostgreSQL tables, RLS, and transactional submit/decision functions were applied to approvia-dev. Storage, automated account provisioning, additional approval levels, and other institutional capabilities remain planned. See [PROJECT_STATUS.md](PROJECT_STATUS.md) for verification and deployment status.
 
 ## Technology responsibilities

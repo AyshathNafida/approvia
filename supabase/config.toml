@@ -1,0 +1,7 @@
+# account-access includes public settings/recovery. It verifies Auth identity
+# itself for onboarding/migration; invite-account verifies Admin via guarded RPC.
+[functions.invite-account]
+verify_jwt = false
+
+[functions.account-access]
+verify_jwt = false

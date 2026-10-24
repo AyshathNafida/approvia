@@ -6,6 +6,7 @@ import type { Session } from '@supabase/supabase-js'
 import App from './App'
 
 vi.mock('./Workspace', () => ({ default: () => null }))
+vi.mock('./AccountAccess', () => ({ default: ({ children }: {children: import('react').ReactNode}) => children, ForgotPassword: () => null, PasswordSetup: () => null }))
 
 const mock = vi.hoisted(() => ({
   configured: true,

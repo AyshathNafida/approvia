@@ -6,7 +6,7 @@
 .admin-list { padding: 0; margin: 0; list-style: none; }
 .admin-list li { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 0; border-bottom: 1px solid #e0e6dc; }
 .admin-list strong { font-size: 14px; overflow-wrap: anywhere; }
-.admin-list span { display: block; font-size: 12px; color: #52675a; margin-top: 6px; line-height: 1.6; }
+.admin-list span { display: block; font-size: 12px; color: #52675a; margin-top: 6px; line-height: 1.6; overflow-wrap: anywhere; }
 .admin-list button { flex-shrink: 0; max-width: 48%; overflow-wrap: anywhere; }
 .admin-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .admin-fieldset .primary-button { margin-bottom: 12px; }

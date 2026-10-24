@@ -3,7 +3,7 @@ import type { FormKind, FieldDefinition } from './requestForms'
 
 export type AccountType = 'STUDENT' | 'FACULTY' | 'ADMIN'
 export type RequestStatus = 'IN_REVIEW' | 'APPROVED' | 'REJECTED'
-export interface Profile { id: string; full_name: string; account_type: AccountType; active: boolean; class_id: string | null }
+export interface Profile { id: string; full_name: string; account_type: AccountType; active: boolean; class_id: string | null; onboarding_complete?: boolean; eligible?: boolean }
 export interface RequestType { id: string; code: string; name: string; form_kind: FormKind; approval_route: string[]; permitted_routes: string[][] }
 export interface ApprovalStep { id: string; approver_id: string; approver_name: string; responsibility: string; position: number; status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SKIPPED' }
 export interface RequestAction { id: string; actor_name: string; responsibility: string | null; step_position: number | null; history_order: number; action: 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'REASSIGNED'; comment: string | null; created_at: string }

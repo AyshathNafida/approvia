@@ -1,5 +1,7 @@
 # Approvia workflows
 
+D16 local account workflows (2026-10-24): Admin invites a college address → email verification → private password setup → protected profile → existing responsibility assignment. Recovery and owner-approved college-email migration are included; pending invitees cannot enter application workspaces. Existing accounts migrate with unchanged IDs/history, Admin first, before separate domain cutover. These additions are not deployed; see [ACCOUNT_INVITATIONS.md](ACCOUNT_INVITATIONS.md). Request processing remains the approved D15 workflow.
+
 Status: required institutional behavior and illustrative flows, with D10's General Request → Tutor → final decision/status/history flow implemented for testing. Login/session restoration/logout, active-profile gating, student submission, and Tutor review screens exist. Other workflows below remain planned unless explicitly identified as implemented. Source: [requirements](PROJECT_REQUIREMENTS.md) sections 6, 8–14, 16–20, 22, and 26. Unsettled extensions are tracked in [DECISIONS.md](DECISIONS.md).
 
 ## Login and dashboard routing

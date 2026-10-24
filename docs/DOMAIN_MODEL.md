@@ -1,5 +1,7 @@
 # Approvia domain model
 
+D16 local extension (2026-10-24): protected account invitations retain intended Student/Faculty type and placement, delivery attempts and onboarding status. Existing profile IDs remain Auth UUIDs; new profiles require verified password onboarding, independent of active status. Owner-only settings separate email readiness from college-only cutover; private approved email mappings preserve existing identities/history. See [ACCOUNT_INVITATIONS.md](ACCOUNT_INVITATIONS.md). Hosted deployment remains D15 until separately verified.
+
 Status: conceptual institutional requirements summary, with a physical schema implemented for the small test MVP D10. The eight deployed MVP tables are profiles, departments, classes, request_types, requests, approval_steps, request_actions, and audit_logs. Other entity concepts remain future scope. The [complete requirements](PROJECT_REQUIREMENTS.md) and approved amendments are authoritative; see [decisions](DECISIONS.md) for unresolved extensions.
 
 ## Institutional structure

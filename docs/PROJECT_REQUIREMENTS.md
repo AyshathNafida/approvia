@@ -1,5 +1,9 @@
 # APPROVIA
 
+## Approved D16 amendment — 2026-10-24
+
+For source sections 5–8, 20 and 23–24, user approved Admin invitations inside Approvia, exact verified `lbscek.ac.in` emails for all account types, private password setup, password recovery, and identity-preserving migration of existing users using owner-approved mappings (Admin first). New invitations require college email immediately; existing users retain transitional access until a separate guarded cutover. Pending invitations grant no application access. Account type/placement remain protected; active status remains independent. Additional Admin creation stays owner-controlled/outside this increment. SMTP-dependent email features default off until configured/tested. This supersedes D14's manual Supabase-first provisioning for new accounts without changing the captured source below. See [D16](DECISIONS.md) and [rollout specification](ACCOUNT_INVITATIONS.md); approval is not hosted deployment verification.
+
 ## Institutional Digital Approval Management System
 
 ## 1. Project Overview

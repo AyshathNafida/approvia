@@ -1,8 +1,20 @@
 # Approvia project status
 
-Last updated: 2026-10-14 (Asia/Calcutta).
+Last updated: 2026-10-24 (Asia/Calcutta).
 
 Current release: D15 typed requests and sequential approvals are deployed, with the catalogue active. Read the latest D15 handoff below for routes, verification and remaining setup. Earlier sections preserve the D10–D14 rollout record.
+
+## D16 local handoff: Admin invitations and college-email access, 2026-10-24
+
+User approved the complete D16 implementation plan: exact verified `lbscek.ac.in` emails for all account types, Admin Student/Faculty invitations, private password onboarding, recovery, and preservation of existing identities/history during owner-approved email migration (Admin first). **Implementation is local; the new migration, Edge Functions and frontend are not applied/deployed.** Deployed D15 remains the hosted baseline. No real invitations, password changes, mappings or domain cutover were performed.
+
+The additive `202610240001_account_invitations.sql` preserves the original three migrations unchanged. Existing profiles are backfilled as onboarded legacy accounts; new profiles default incomplete/nonlegacy. Separate owner-only `email_enabled` and `college_only` switches both default false. New invitations require exact college email immediately; existing accounts retain transitional access until the guarded owner cutover. Protected reservation/claim records, Auth identity binding, service-only finalization and placement rechecks prevent pending-user access and retain retryable partial failures. Current Auth email/verification and protected profile state gate RLS, Admin RPCs, request processing and reviewer selection. The legacy provisioning RPC is retired.
+
+Two Edge Functions validate real Auth identities, enforce caller-scoped Admin guards, keep privileged credentials server-only, fix callback URLs and enforce allowed origins. Auth password/email updates use the verified caller bearer token through the user endpoint, not a privileged email-confirmation override. The frontend includes Admin invitation status/resend, password setup, recovery, secure-email-change guidance and a migration banner; callback flows precede workspaces and scrub token-bearing URLs. Existing D15 request privacy and sequential review remain unchanged.
+
+Rollout instructions, SMTP/templates/redirect requirements, private mapping and separately guarded cutover/rollback templates are in [ACCOUNT_INVITATIONS.md](ACCOUNT_INVITATIONS.md). A working custom SMTP sender, private owner-approved mappings, hosted baseline checks/backups, deployment and real-inbox/browser acceptance remain outstanding. Additional Admin creation remains outside this increment. The application mail switch gates its own endpoints, not Supabase's public Auth endpoints; SMTP/Auth platform configuration must also be controlled.
+
+Verification: **128 tests passed across 10 files** in the final full run with one worker, a 15-second test timeout and 90-second default hook timeout. This includes PostgreSQL Student → Tutor → HOD approval/privacy and unchanged request/history after email migration, invitation/migration reservation collisions, pending denial, direct-RPC/RLS bypasses, delivery retries, password/recovery callbacks and Edge bearer-token contracts. Production build, lint, Edge TypeScript checking, documentation link validation (15 Markdown files; no broken local links), and Git whitespace checks passed. The original three migrations have no diff. An earlier two-worker run hit Windows worker/startup and execution timeouts; the final single-worker run passed. PGlite uses stub Auth identities; Edge tests use mocked providers and real Request/Response contracts. No hosted SMTP/Auth/runtime proof is claimed. Desktop (1280px) and phone (390px) real-component layouts were inspected with isolated ignored sample-data preview fixtures; these sent no invitations and did not test real Auth/RLS.
 
 ## Earlier deployed MVP and Admin increment (D10–D14)
 

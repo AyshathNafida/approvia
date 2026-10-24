@@ -1,5 +1,7 @@
 # Admin setup and assignment management
 
+D16 local update (2026-10-24): new account setup uses Admin invitations rather than pre-created Supabase test logins. See [ACCOUNT_INVITATIONS.md](ACCOUNT_INVITATIONS.md) before rollout. The new additive migration is not yet applied; D14/D15 remain the documented hosted baseline. SMTP/mappings and separate cutover acceptance are required. Existing setup instructions below describe the prior applied increment; never rerun them to deploy D16.
+
 Date: 2026-10-14. Status: implemented and deployed; hosted migration, first Admin provisioning, and rolled-back hosted RPC/RLS smoke verification completed. User confirmed real Admin password login/dashboard access in Chrome. A hosted two-session write-gate check passed; complete role-switching browser acceptance and broader concurrency/load scenarios remain pending.
 
 Approved scope: [DECISIONS.md](DECISIONS.md) D14. The same email/password login opens the Admin workspace for an active protected ADMIN profile. Admin can configure departments, four-year class batches, existing confirmed Student/Faculty test logins, student placement, account status, and faculty responsibilities. Admin cannot read private request contents or approve. HOD/Dean/Principal assignments are configuration only; request processing remains Tutor-only.

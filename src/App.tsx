@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import Workspace from './Workspace'
+import AccountGate, { ForgotPassword, PasswordSetup } from './AccountAccess'
 import './App.css'
 
 function App() {
@@ -12,6 +13,19 @@ function App() {
   const [showPassword, setShowPassword] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [forgot, setForgot] = useState(false)
+  const [callback, setCallback] = useState(() => {
+    const path = window.location.pathname
+    return path === '/auth/invite' ? 'invite' : path === '/auth/recovery' ? 'recovery' : path === '/auth/email-change' ? 'email-change' : null
+  })
+  const [callbackError] = useState(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1))
+    return params.has('error') || new URLSearchParams(window.location.search).has('error')
+  })
+  function finishCallback() {
+    window.history.replaceState(null, '', '/')
+    setCallback(null); setSession(null); setError(''); setForgot(false)
+  }
 
   useEffect(() => {
     if (!supabase) return
@@ -25,11 +39,15 @@ function App() {
       }
     })
     supabase.auth.getSession().then(({ data, error: sessionError }) => {
+      // Supabase consumes the callback session first; strip token-bearing URLs
+      // even when a newer Auth event wins the session-restoration race.
+      if (window.location.pathname.startsWith('/auth/')) window.history.replaceState(null, '', window.location.pathname)
       if (!mounted || receivedAuthEvent) return
       setSession(data.session)
       setCheckingSession(false)
       if (sessionError) setError('Could not restore your session. Please sign in again.')
     }).catch(() => {
+      if (window.location.pathname.startsWith('/auth/')) window.history.replaceState(null, '', window.location.pathname)
       if (!mounted || receivedAuthEvent) return
       setCheckingSession(false)
       setError('Could not restore your session. Please sign in again.')
@@ -64,15 +82,17 @@ function App() {
   }
 
   async function signOut() {
-    if (!supabase || busy) return
+    if (!supabase || busy) return false
     setError('')
     setBusy(true)
     try {
       const { error: logoutError } = await supabase.auth.signOut({ scope: 'local' })
-      if (logoutError) setError('Unable to sign out. Please try again.')
-      else setSession(null)
+      if (logoutError) { setError('Unable to sign out. Please try again.'); return false }
+      setSession(null)
+      return true
     } catch {
       setError('Unable to sign out. Check your connection and try again.')
+      return false
     } finally {
       setBusy(false)
     }
@@ -81,7 +101,7 @@ function App() {
   return (
     <main className="page">
       <header className="app-header"><div className="brand"><span className="brand-mark" aria-hidden="true">A</span> Approvia</div>{session && <div className="signed-in-header"><p className="account-email">{session.user.email}</p><button className="secondary-button" type="button" onClick={signOut} disabled={busy}>{busy ? 'Signing out…' : 'Sign out'}</button></div>}</header>
-      {session ? <><Workspace key={session.user.id} userId={session.user.id} />{error && <p className="error" role="alert">{error}</p>}</> : <>
+      {callback ? <div className="account-flow">{checkingSession ? <p role="status">Checking your email link…</p> : callbackError || (!session && callback !== 'email-change') ? <section className="auth-card"><h2>Email link unavailable</h2><p>This link is invalid, expired, or has already been used. Request a fresh invitation from Admin or a new password reset email.</p><button className="secondary-button" onClick={finishCallback}>Back to sign in</button></section> : callback === 'email-change' ? <section className="auth-card"><h2>Email confirmation received</h2><p>If another confirmation is required, check both inboxes. Sign out and sign in with your confirmed college email once the change is complete.</p><button className="secondary-button" onClick={async () => { if (!session || await signOut()) finishCallback() }}>Return to sign in</button></section> : <PasswordSetup mode={callback as 'invite' | 'recovery'} onDone={finishCallback} />}</div> : session ? <><AccountGate key={`${session.user.id}:${session.user.email}`} session={session}><Workspace key={session.user.id} userId={session.user.id} /></AccountGate>{error && <p className="error" role="alert">{error}</p>}</> : forgot ? <div className="account-flow"><ForgotPassword onBack={() => setForgot(false)} /></div> : <>
       <div className="content">
       <section className="intro" aria-labelledby="page-title">
         <p className="eyebrow">Institutional approval management</p>
@@ -98,7 +118,7 @@ function App() {
             {!supabase && <p role="status" className="notice">Sign-in is currently unavailable. Please contact your administrator.</p>}
             <form onSubmit={signIn}>
               <label htmlFor="email">Email address</label>
-              <input id="email" type="email" autoComplete="username" placeholder="you@example.edu" value={email} onChange={(event) => setEmail(event.target.value)} required disabled={busy || !supabase} />
+              <input id="email" type="email" autoComplete="username" placeholder="name@lbscek.ac.in" value={email} onChange={(event) => setEmail(event.target.value)} required disabled={busy || !supabase} />
               <label htmlFor="password">Password</label>
               <div className="password-field">
                 <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required disabled={busy || !supabase} />
@@ -106,6 +126,7 @@ function App() {
               </div>
               <button className="primary-button" type="submit" disabled={busy || !supabase}>{busy ? 'Signing in…' : 'Sign in'}</button>
             </form>
+            <button className="secondary-button" type="button" disabled={!supabase || busy} onClick={() => setForgot(true)}>Forgot password?</button>
             <p className="account-help">Need an account or help signing in? Contact your administrator.</p>
           </>
         )}
@@ -113,6 +134,7 @@ function App() {
       </section>
       </div>
       </>}
+      {callback && error && <p className="error" role="alert">{error}</p>}
       <footer>Approvia · Institutional Digital Approval Management System</footer>
     </main>
   )
