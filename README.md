@@ -10,7 +10,7 @@ Approvia's deployed development MVP supports email/password login, protected Stu
 
 ## Start here
 
-The D16 account update is implemented locally but **not deployed**: Admin invitations for `@lbscek.ac.in`, verified password onboarding, recovery, and identity-preserving college-email migration. Email delivery and college-only cutover both default off. Existing development accounts retain access until the separate owner cutover. See [ACCOUNT_INVITATIONS.md](docs/ACCOUNT_INVITATIONS.md) for SMTP, migration mappings, rollout and acceptance prerequisites. The deployed development baseline remains D15 until rollout is verified.
+The D16 account update is deployed with email operations disabled: Admin invitations for `@lbscek.ac.in`, verified password onboarding, recovery, and identity-preserving college-email migration. Email delivery and college-only cutover both default off. Existing development accounts retain access until the separate owner cutover. See [ACCOUNT_INVITATIONS.md](docs/ACCOUNT_INVITATIONS.md) for SMTP, migration mappings, rollout and acceptance prerequisites. D16 is deployed; real email/onboarding and migration acceptance remain pending.
 
 For a new coding chat, use this repository as the workspace and have the agent read [AGENTS.md](AGENTS.md). It directs agents to this introduction, current status, decisions, and the documents relevant to their task. The same documents can be read directly in any chat that has access to these files.
 

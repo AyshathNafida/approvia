@@ -1,6 +1,6 @@
 # Admin invitations and college-email rollout (D16)
 
-Approved 2026-10-24. Local implementation; **not applied or deployed to Supabase/Vercel**. Live email and strict college-only access are disabled by default. Source: requirements sections 5–8, 20, 23–24 and decisions D6–D8/D16.
+Approved 2026-10-24. **Migration, both Edge Functions and frontend deployed on 2026-10-24**, with disabled-email/access/privacy checks passed. Real email acceptance is pending. Live email and strict college-only access are disabled by default. Source: requirements sections 5–8, 20, 23–24 and decisions D6–D8/D16.
 
 ## Behavior
 
@@ -38,4 +38,4 @@ Forgot password returns a generic response for college emails. Password setup/re
 
 Run `npm run test -- --maxWorkers=1 --testTimeout=15000 --hookTimeout=90000`, `npm run build`, `npm run lint`, and `npm run check:edge`. On Windows use a writable ignored workspace TEMP/TMP directory if necessary. PGlite tests use stub Auth identities and do not prove SMTP, real Auth triggers, browser link handling or hosted multi-session concurrency.
 
-Before hosted completion, verify an authorized college invitation in a real inbox, email confirmation, password setup, pending denial, resend/expired links, recovery, Admin migration with both confirmations, preserved IDs/assignments/history, stale-session denial after cutover, and Student → Tutor → HOD processing. Check Admin privacy and direct API denial. Inspect desktop/phone layouts. Record actual hosted checks in PROJECT_STATUS.md and remove only approved disposable fixtures. SMTP credentials, real mappings, hosted deployment and real-inbox acceptance remain prerequisites; no such verification is claimed by local checks.
+Before hosted completion, verify an authorized college invitation in a real inbox, email confirmation, password setup, pending denial, resend/expired links, recovery, Admin migration with both confirmations, preserved IDs/assignments/history, stale-session denial after cutover, and Student → Tutor → HOD processing. Check Admin privacy and direct API denial. Inspect desktop/phone layouts. Record actual hosted checks in PROJECT_STATUS.md and remove only approved disposable fixtures. SMTP credentials, real mappings and real-inbox acceptance remain prerequisites for enabling email and college-only cutover. Hosted deployment is complete; its checks are recorded in PROJECT_STATUS.md.
